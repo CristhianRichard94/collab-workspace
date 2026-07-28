@@ -1,0 +1,27 @@
+
+<app-layout>
+@if (userService.currentUser()) {
+    current user:
+    {{userService.currentUser()?.name}}
+    <div class="board-list flex flex-col md:flex-row">
+        @if (!userService.currentUser()?.boards || userService.currentUser()?.boards?.length == 0) {
+            <p>You aren't participating in any boards</p>
+            <button>Create a board</button>
+            <span>or</span>
+            <label>
+                Join somebody else's board:
+                <input type="text" placeholder="Insert shared board link:" (change)="joinBoard($event.target.value)">
+            </label>
+        } @else {
+            @for (board of userService.currentUser()?.boards; track board.id) {
+
+                    <button class="board-container border-black border-1 rounded-sm p-2 m-4 md:flex-1 cursor-pointer"  [routerLink]="[board.id]">
+                        <h5>{{board.title}}</h5>
+                        <p>{{board.description}}</p>
+                        <img [src]="board.previewUrl" [alt]="board.title + 'preview'">
+                    </button>
+            }
+        }
+    </div>
+}
+</app-layout>

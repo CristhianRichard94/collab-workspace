@@ -1,0 +1,17 @@
+<app-layout>
+  @if (boardService.board.isLoading()) {
+    <p class="error-message border-2 rounded-md border-sky-500 bg-sky-100 inline p-2 flex-0 m-3">
+      Loading dashboard...
+    </p>
+  }
+  <!-- @else if (boardService.board.error()) {
+    <p class="error-message border-2 rounded-md border-red-500 bg-red-100 inline p-2 flex-0 m-3">Error loading dashboard: {{boardService.board.error()?.message}}</p>
+} -->
+  @else if (boardService.board.value(); as board) {
+    <h1 class="absolute top-4 left-4">{{ board.title }}</h1>
+    <canvas id="workspace-canvas size-full"></canvas>
+    @for (card of boardService.board.value().cards; track $index) {
+      {{ card.title }}
+    }
+  }
+</app-layout>
