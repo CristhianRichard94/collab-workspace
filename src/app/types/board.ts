@@ -1,5 +1,5 @@
 export interface Board extends BoardPreview {
-  cards: Array<Card>;
+  tasks: Array<Task>;
 }
 
 export interface BoardPreview {
@@ -10,7 +10,7 @@ export interface BoardPreview {
 }
 
 
-export interface Card {
+export interface Task {
   title: string;
   description: string;
   state: TaskState;

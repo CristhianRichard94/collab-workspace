@@ -15,7 +15,7 @@ export class Board {
   constructor() {
     effect(() => {
       this.boardService.setBoardId(this.id());
-      // console.log(this.boardService.board.value().cards);
+      // console.log(this.boardService.board.value().tasks);
     })
   }
 }

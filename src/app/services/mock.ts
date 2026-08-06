@@ -25,7 +25,7 @@ export const mockBoards: Array<Board> = [
     title: '🚀 Product Launch 2026',
     description: 'Main planning board for Q1 roadmap execution.',
     previewUrl: 'https://picsum.photos/200',
-    cards: [
+    tasks: [
       {
         title: 'Design landing page mockup',
         description: 'Create high-fidelity Figma designs for desktop and mobile.',
@@ -53,7 +53,7 @@ export const mockBoards: Array<Board> = [
     title: '🏠 Home Renovation',
     description: 'Tracking contractor tasks and design ideas.',
     previewUrl: 'https://picsum.photos/200',
-    cards: [
+    tasks: [
       {
         title: 'Pick kitchen tile colors',
         description: 'Review ceramic samples from the supplier.',

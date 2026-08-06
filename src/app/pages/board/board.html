@@ -10,8 +10,8 @@
   @else if (boardService.board.value(); as board) {
     <h1 class="absolute top-4 left-4">{{ board.title }}</h1>
     <canvas id="workspace-canvas size-full"></canvas>
-    @for (card of boardService.board.value().cards; track $index) {
-      {{ card.title }}
+    @for (task of boardService.board.value().tasks; track $index) {
+      {{ task.title }}
     }
   }
 </app-layout>

@@ -20,5 +20,5 @@ export class BoardService {
         isLoading: () => null,
         value: () => mockBoards.find(b => b.id === this.boardId())!
     }
-  totalCards = computed(() => this.board.value()?.cards.length || 0);
+  totaltasks = computed(() => this.board.value()?.tasks.length || 0);
 }
