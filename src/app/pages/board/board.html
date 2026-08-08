@@ -1,17 +1,50 @@
 <app-layout>
-  @if (boardService.board.isLoading()) {
-    <p class="error-message border-2 rounded-md border-sky-500 bg-sky-100 inline p-2 flex-0 m-3">
-      Loading dashboard...
-    </p>
-  }
-  <!-- @else if (boardService.board.error()) {
-    <p class="error-message border-2 rounded-md border-red-500 bg-red-100 inline p-2 flex-0 m-3">Error loading dashboard: {{boardService.board.error()?.message}}</p>
-} -->
-  @else if (boardService.board.value(); as board) {
-    <h1 class="absolute top-4 left-4">{{ board.title }}</h1>
-    <canvas id="workspace-canvas size-full"></canvas>
-    @for (task of boardService.board.value().tasks; track $index) {
-      {{ task.title }}
+  <div class="board flex flex-col size-full">
+    @if (boardService.board$.isLoading()) {
+      <p class="error-message border-2 rounded-md border-sky-500 bg-sky-100 inline p-2 flex-0 m-3">
+        Loading dashboard...
+      </p>
     }
-  }
+    <!-- @else if (boardService.board$.error()) {
+    <p class="error-message border-2 rounded-md border-red-500 bg-red-100 inline p-2 flex-0 m-3">Error loading dashboard: {{boardService.board$.error()?.message}}</p>
+} -->
+
+    @else if (boardService.board$.value(); as board) {
+      <h1 class="board-title">
+        <span contenteditable="true">
+
+          {{ board.title }}
+        </span>
+      </h1>
+      @let columns = boardService.board$.value()?.columns;
+      @if (columns) {
+        <div class="column-container flex size-full justify-between" cdkDropListGroup>
+          @for (column of columns; track $index) {
+            @let tasks = column.tasks;
+            <div class="column border-dashed border-x-1 flex-1"
+            cdkDropList [id]="'list-'+column.id"
+            [cdkDropListData]="tasks"
+            (cdkDropListDropped)="taskDropped($event, $index)"
+            >
+              <p class="column-title text-xl bg-grey-700 flex justify-center">
+                {{ column.name }}
+              </p>
+              <div class="task-container h-100%" [id]="'task-container-'+column.id">
+                  @for (task of tasks; track $index) {
+                    <div class="task border-1 border-black p-2 m-2 w-50 h-20 flex flex-col" cdkDrag [cdkDragData]="task">
+                      <p class="task-title text-xl text-grey-900 text-center w-full">
+                      {{task.title}}
+                      </p>
+                      @if (task.assignedTo.name) {
+                        <p class="assignedTo text-right w-full">Assigned to : {{task.assignedTo.name ===  userService.currentUser()?.name ? "You" : task.assignedTo.name}}</p>
+                      }
+                    </div>
+                  }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
 </app-layout>

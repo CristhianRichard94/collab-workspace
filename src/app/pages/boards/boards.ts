@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../services/user';
 import { BoardService } from '../../services/board';
 import { RouterLink } from "@angular/router";
-import { Layout } from '../../components/layout/layout';
+import { Layout } from '../../layout/layout';
 
 @Component({
   selector: 'app-boards',
