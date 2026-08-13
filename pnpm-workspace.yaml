@@ -1,6 +1,8 @@
 allowBuilds:
+  '@firebase/util': set this to true or false
   '@parcel/watcher': true
   esbuild: true
   lmdb: true
   msgpackr-extract: true
+  protobufjs: set this to true or false
 allowedBuildFrom: '@parcel/watcher'
