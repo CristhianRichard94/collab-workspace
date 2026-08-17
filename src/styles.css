@@ -46,7 +46,7 @@ button:hover {
   justify-content: center;
   box-sizing: border-box;
   cursor: pointer;
-  background: #ffc9de;
+  background: whitesmoke;
   font-family: sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -59,5 +59,5 @@ button:hover {
 
 .primary-cta:hover {
   box-shadow: 1px 1px 0 #000;
-  background: --color-accent;
+  background-color: var(--color-accent);
 }
