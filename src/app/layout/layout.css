@@ -3,13 +3,20 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
+:host.fixed-layout {
+    overflow: hidden;
+
+}
+
+.logo {
+    height: 100%;
+    width: 10rem;
+}
 
 header, footer {
      height: 3rem;
-     background-color: #343434;
 }
 footer {
     height: 2rem;
@@ -21,5 +28,26 @@ main {
     justify-content: center;
     flex-direction:column;
     align-items: center;
+    background-color: var(--color-bg);
 }
 
+.current-user {
+    min-width: fit-content;
+}
+
+.header-btn {
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: color 150ms ease, background-color 150ms ease;
+}
+
+.header-btn:hover {
+    box-shadow: none;
+    color: var(--color-text-primary);
+    background: var(--color-bg);
+}

@@ -1,6 +1,4 @@
 .board {
-  background: #fdf6ec;
-  font-family: sans-serif;
 }
 
 .board-title {
@@ -24,9 +22,8 @@
 }
 
 .column {
-  background: #fff;
-  border: 3px solid #000;
-  box-shadow: 8px 8px 0 #000;
+  border: 3px solid var(--color-bg);
+  box-shadow: 8px 8px 0 var(--color-bg);
   padding: 0;
   min-width: 260px;
 }
@@ -99,4 +96,51 @@
 .cdk-drop-list-receiving .column-title {
   background: #b9fbc0;
   transition: background 150ms ease;
+}
+
+
+
+.add-columns-btn {
+  position: relative;
+  align-self: center;
+  top: 50%;
+  border-radius: 100%;
+  width: 10rem;
+  height: 10rem;
+}
+
+.add-columns-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 100%;
+  border: 3px solid currentColor;
+  animation: pulse-wave 2.6s ease-out infinite;
+  pointer-events: none;
+}
+
+.add-columns-btn:hover::after,
+.add-columns-btn:focus-visible::after {
+  animation-play-state: none;
+  opacity: 0;
+}
+
+
+@keyframes pulse-wave {
+  0% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  8% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  32% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
 }

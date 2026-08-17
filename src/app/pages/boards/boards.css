@@ -1,3 +1,4 @@
-.board-container img {
+.board-preview-img {
     pointer-events: none;
+    max-height: 10rem;
 }

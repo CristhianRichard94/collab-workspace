@@ -1,16 +1,19 @@
-<header class="text-white flex justify-center items-center w-full">
-    <h1 class="text-2xl capitalize w-full text-center">Collab workspace</h1>
-    @if (userService.currentUser()) {
-        <span class="current-user mx-4">{{userService.currentUser()?.name}}</span>
-        <button class="cursor-pointer mx-4" (click)="logout()">Logout</button>
+<header class="flex justify-center items-center w-full bg-surface text-text-primary">
+    <div class="logo-container flex-grow-1 flex justify-center">
+        <img [src]="logoUrl()" alt="Task Grid Logo" class="logo">
+    </div>
+    <app-theme-switch></app-theme-switch>
+    @if (authService.currentUser()) {
+        <span class="current-user mx-4">{{authService.currentUser()?.name}}</span>
+        <button class="header-btn mx-4" (click)="logout()">Logout</button>
     } @else {
-        <button> <a [routerLink]="['/login']" routerLinkActive="router-link-active" >Login</a> </button>
+        <button class="header-btn mx-4"> <a [routerLink]="['/login']" class="p-1" >Login</a> </button>
     }
 </header>
-<main>
+<main class="bg-surface text-text-primary">
     <ng-content></ng-content>
 </main>
-<footer class="text-white flex justify-end items-center">
+<footer class="flex justify-end items-center bg-surface text-text-primary">
 <span class="text-sm px-2">
     Made with ❤️ by <a href="https://cristhian-richard.com" target="_blank">Cristhian Richard</a>
 </span>

@@ -1,0 +1,19 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Taskgrid icon</title>
+  <desc id="desc">A square brutalist mark made of four grid blocks, one filled solid to represent an active task.</desc>
+
+  <rect x="0" y="0" width="240" height="240" fill="#0D0D0D"/>
+
+  <!-- hard offset shadow -->
+  <rect x="58" y="58" width="140" height="140" fill="#F2E94E"/>
+
+  <!-- grid frame -->
+  <rect x="46" y="46" width="140" height="140" fill="#0D0D0D" stroke="#F5F5F0" stroke-width="8"/>
+
+  <!-- 2x2 grid divisions -->
+  <line x1="116" y1="46" x2="116" y2="186" stroke="#F5F5F0" stroke-width="8"/>
+  <line x1="46" y1="116" x2="186" y2="116" stroke="#F5F5F0" stroke-width="8"/>
+
+  <!-- filled active cell, top-right -->
+  <rect x="120" y="50" width="62" height="62" fill="#F2E94E"/>
+</svg>

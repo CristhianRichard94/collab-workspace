@@ -1,9 +1,7 @@
-<app-layout>
-    <div class="container text-white flex flex-col">
-        <h1 class="text-3xl py-4">Welcome</h1>
-        <p class="text-sm py-2">Login to continue to your boards</p>
-        <button class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer" routerLink="/login">Login</button>
-    </div>
-    <img src="bg.jfif" alt="Background Landing page image" class="fixed -z-1 from-blue-200 to-blue-500">
-    <div class="backdrop bg-black opacity-50 fixed -z-1 size-full"></div>
-</app-layout>
+    <app-layout [fixed]="false">
+        <div class="home-container text-text-secondary flex flex-col">
+            <h1 class="text-5xl py-4">Welcome</h1>
+            <p class="text-sm py-2">Login to continue to your boards</p>
+            <button class="cta primary-cta px-4 py-2 bg-white border-black border-1 rounded cursor-pointer text-black" routerLink="/login">Login</button>
+        </div>
+    </app-layout>

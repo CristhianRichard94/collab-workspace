@@ -1,22 +1,28 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UserService } from '../services/user';
+import { AuthService } from '../services/auth';
+import { ThemeService } from '../services/theme';
+import { ThemeSwitch } from '../components/theme-switch/theme-switch';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterLink],
+  imports: [RouterLink, ThemeSwitch],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
+  host: {
+    '[class.fixed-layout]': 'fixed()'
+  }
 })
 export class Layout {
-  userService = inject(UserService)
+  authService = inject(AuthService);
   router: Router = inject(Router);
-
+  themeService = inject(ThemeService);
+  logoUrl = computed(() => `/logo/logo-full-${this.themeService.resolvedTheme()}.svg`)
+  fixed = input<boolean>(true);
 
   logout() {
-    this.userService.logout();
+    this.authService.logout();
       this.router.navigate(["/"])
-
   }
 
 }
