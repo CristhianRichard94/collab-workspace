@@ -10,24 +10,25 @@
 } -->
 
     @else if (boardService.board$.value(); as board) {
-      <h1 class="board-title">
-        <span contenteditable="true">
-
-          {{ board.title }}
-        </span>
+      <h1 class="board-title flex items-center">
+        @if (editingTarget() === 'board') {
+          <input
+            class="title-edit-input"
+            [value]="editValue()"
+            (input)="editValue.set($any($event.target).value)"
+            (keydown.enter)="confirmEdit()"
+            (keydown.escape)="cancelEdit()"
+            (blur)="confirmEdit()"
+          />
+        } @else {
+          <span>{{ board.title }}</span>
+          <button class="edit-btn" (click)="startEdit('board', board.title)" aria-label="Edit board title">✎</button>
+        }
       </h1>
       @let columns = boardService.board$.value()?.columns;
 
-       <button (click)="addColumn()" class="add-columns-btn flex flex-col text-text-secondary border-text-primary border-1 justify-center bg-accent-fill"
-        [ngClass]="{'no-columns': !columns?.length}">
-         <span class="new-icon">+</span>
-         @if(!columns?.length) {
-           Add a new column
-         }
-       </button>
-
       @if (columns) {
-        <div class="column-container flex size-full justify-between" cdkDropListGroup>
+        <div class="column-container flex size-full" cdkDropListGroup>
           @for (column of columns; track $index) {
             @let tasks = column.tasks;
             <div class="column border-dashed border-x-1 flex-1"
@@ -35,8 +36,20 @@
             [cdkDropListData]="tasks"
             (cdkDropListDropped)="taskDropped($event, $index)"
             >
-              <p class="column-title text-xl bg-grey-700 flex justify-center">
-                {{ column.name }}
+              <p class="column-title text-xl bg-grey-700 flex justify-center items-center">
+                @if (editingTarget() === $index) {
+                  <input
+                    class="title-edit-input"
+                    [value]="editValue()"
+                    (input)="editValue.set($any($event.target).value)"
+                    (keydown.enter)="confirmEdit()"
+                    (keydown.escape)="cancelEdit()"
+                    (blur)="confirmEdit()"
+                  />
+                } @else {
+                  <span>{{ column.name }}</span>
+                  <button type="button" class="edit-btn" (click)="startEdit($index, column.name)" aria-label="Edit column name">✎</button>
+                }
               </p>
               <div class="task-container h-100%" [id]="'task-container-'+column.id">
                   @for (task of tasks; track $index) {
@@ -52,6 +65,17 @@
               </div>
             </div>
           }
+
+      <div class="add-column-wrapper flex items-center mx-6">
+
+        <button (click)="addColumn()" class="add-columns-btn flex justify-center items-center text-text-secondary border-text-primary border-1 justify-center bg-accent-fill"
+        [ngClass]="{'no-columns': !columns?.length}">
+         <span class="new-icon"> </span>
+         @if(!columns?.length) {
+           Add a new column
+          }
+        </button>
+      </div>
         </div>
       }
     }

@@ -16,12 +16,38 @@ export class Board {
   authService = inject(AuthService);
   id = input.required<string>();
 
+  editingTarget = signal<'board' | number | null>(null);
+  editValue = signal('');
+
   constructor() {
     effect(() => {
       this.boardService.setBoardId(this.id());
     })
   }
 
+  startEdit(target: 'board' | number, currentValue: string) {
+    this.editingTarget.set(target);
+    this.editValue.set(currentValue);
+  }
+
+  cancelEdit() {
+    this.editingTarget.set(null);
+  }
+
+  confirmEdit() {
+    const target = this.editingTarget();
+    const value = this.editValue().trim();
+    if (target === null || !value) {
+      this.editingTarget.set(null);
+      return;
+    }
+    if (target === 'board') {
+      this.boardService.renameBoard(value);
+    } else {
+      this.boardService.renameColumn(value, target);
+    }
+    this.editingTarget.set(null);
+  }
 
   taskDropped(event: CdkDragDrop<Task[]>, targetColumnIndex: number) {
     const previousColumnId = event.previousContainer.id.replace('list-', '');
@@ -38,6 +64,17 @@ export class Board {
   }
 
   addColumn() {
-    this.boardService.addColumn()
+    this.boardService.addColumn();
+  }
+
+
+  renameColumn(event: Event, index:number) {
+    const name = (event.target as HTMLParagraphElement).innerHTML
+    this.boardService.renameColumn(name, index)
+  }
+
+  renameBoard(event: Event) {
+    const name = (event.target as HTMLParagraphElement).innerHTML
+    this.boardService.renameBoard(name);
   }
 }
