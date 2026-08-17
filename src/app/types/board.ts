@@ -1,7 +1,8 @@
-import { User } from "./user";
+import { User, UserBoardPermission } from "./user";
 
 export interface Board extends BoardPreview {
   columns: Array<TaskColumn>
+  contributors: Array<UserBoardPermission>
 }
 
 export interface BoardPreview {
@@ -30,13 +31,13 @@ export interface TaskColumn {
 id: string;
 name: string;
 description?: string;
-index: number;
+// index: number;
 tasks: Array<Task>
 }
 
 export const DefaultColumns: Array<TaskColumn> = [
-  {id: "0", index: 0, name: 'Todo', tasks:[]},
-  {id: "1", index: 1, name: 'In progress', tasks:[]},
-  {id: "2", index: 2, name: 'Review', tasks:[]},
-  {id: "3", index: 3, name: 'Done', tasks:[]},
+  {id: "0", name: 'Todo', tasks:[]},
+  {id: "1", name: 'In progress', tasks:[]},
+  {id: "2", name: 'Review', tasks:[]},
+  {id: "3", name: 'Done', tasks:[]},
 ]

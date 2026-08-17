@@ -3,16 +3,17 @@ import { BoardService } from '../../services/board';
 import { Layout } from '../../layout/layout';
 import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { Task } from '../../types/board';
-import { UserService } from '../../services/user';
+import { AuthService } from '../../services/auth';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-board',
-  imports: [Layout, CdkDrag, CdkDropList, CdkDropListGroup],
+  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup],
   templateUrl: './board.html',
   styleUrl: './board.css',
 })
 export class Board {
   boardService = inject(BoardService);
-  userService = inject(UserService);
+  authService = inject(AuthService);
   id = input.required<string>();
 
   constructor() {
@@ -34,5 +35,9 @@ export class Board {
       targetColumnIndex,
       event.currentIndex,
     );
+  }
+
+  addColumn() {
+    this.boardService.addColumn()
   }
 }

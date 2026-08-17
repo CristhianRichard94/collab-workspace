@@ -17,6 +17,15 @@
         </span>
       </h1>
       @let columns = boardService.board$.value()?.columns;
+
+       <button (click)="addColumn()" class="add-columns-btn flex flex-col text-text-secondary border-text-primary border-1 justify-center bg-accent-fill"
+        [ngClass]="{'no-columns': !columns?.length}">
+         <span class="new-icon">+</span>
+         @if(!columns?.length) {
+           Add a new column
+         }
+       </button>
+
       @if (columns) {
         <div class="column-container flex size-full justify-between" cdkDropListGroup>
           @for (column of columns; track $index) {
@@ -36,7 +45,7 @@
                       {{task.title}}
                       </p>
                       @if (task.assignedTo.name) {
-                        <p class="assignedTo text-right w-full">Assigned to : {{task.assignedTo.name ===  userService.currentUser()?.name ? "You" : task.assignedTo.name}}</p>
+                        <p class="assignedTo text-right w-full">Assigned to : {{task.assignedTo.name ===  authService.currentUser()?.name ? "You" : task.assignedTo.name}}</p>
                       }
                     </div>
                   }

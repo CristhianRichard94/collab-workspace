@@ -1,8 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { UserService } from '../../services/user';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../services/auth';
 import { BoardService } from '../../services/board';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from '@angular/router';
 import { Layout } from '../../layout/layout';
+import { addDoc, collection, doc, Firestore, setDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-boards',
@@ -10,19 +11,24 @@ import { Layout } from '../../layout/layout';
   templateUrl: './boards.html',
   styleUrl: './boards.css',
 })
-export class Boards implements OnInit {
-  userService: UserService = inject(UserService);
+export class Boards {
+  authService: AuthService = inject(AuthService);
   boardService: BoardService = inject(BoardService);
+  firestore = inject(Firestore);
+  router = inject(Router);
 
-  currentUser = this.userService.currentUser;
+  currentUser = this.authService.currentUser;
 
-  ngOnInit(): void {
-    if (!this.userService.currentUser()) {
-      this.userService.login("");
+  joinBoard() {}
+
+
+  async createBoard() {
+    try {
+      const board = await this.boardService.createBoard();
+      this.router.navigate(['boards', board?.id]);
+
+    } catch (e) {
+      console.error(`Error on board creation: ${e}`);
     }
-  }
-
-  joinBoard(url: string) {
-
   }
 }
