@@ -1,23 +1,15 @@
 import { inject, Service, signal } from '@angular/core';
-import { User } from '../types/user';
-// import { toSignal } from '@angular/core/rxjs-interop';
-import {HttpClient} from "@angular/common/http";
-import {mockUser} from "./mock";
+import { AuthService } from './auth';
+import { collection, docData, documentId, Firestore, getDocs, query, where } from '@angular/fire/firestore';
+import { UserBoardPermission } from '../types/user';
 
 @Service()
 export class UserService {
-  http = inject(HttpClient);
-  // private _currentUser = toSignal<User | null>(this.http.get<User>('/api/user'), { initialValue: null });
-  private _currentUser = signal<User | null>(null);
+  firestore = inject(Firestore);
 
-  readonly currentUser = this._currentUser.asReadonly();
 
-  login(username: string) {
-    this._currentUser.set(mockUser);
-    console.log(this.currentUser())
-  }
-
-  logout() {
-    this._currentUser.set(null);
+  async getContributors(userList: Array<UserBoardPermission>) {
+    const userCollection = collection(this.firestore, 'users')
+    return await getDocs(query(userCollection, where(documentId(), 'in', userList.map(u => u.uid))))
   }
 }

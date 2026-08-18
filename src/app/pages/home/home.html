@@ -1,9 +1,75 @@
-<app-layout>
-    <div class="container text-white flex flex-col">
-        <h1 class="text-3xl py-4">Welcome</h1>
-        <p class="text-sm py-2">Login to continue to your boards</p>
-        <button class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer" routerLink="/login">Login</button>
-    </div>
-    <img src="bg.jfif" alt="Background Landing page image" class="fixed -z-1 from-blue-200 to-blue-500">
-    <div class="backdrop bg-black opacity-50 fixed -z-1 size-full"></div>
+<app-layout [fixed]="false">
+  <div class="home-container text-text-secondary flex flex-col">
+
+    <section class="hero flex flex-col items-center text-center px-4 py-16">
+      <h1
+        class="text-4xl md:text-5xl font-bold text-text-primary max-w-3xl"
+        aria-label="Time to organize, ship, collaborate, and focus your work."
+      >
+        Time to <app-hero-scramble [words]="['Organize', 'Ship', 'Collaborate', 'Focus']" /><br />your work.
+      </h1>
+      <p class="hero-subtext text-base md:text-lg max-w-xl py-4">
+        Task Grid is a drag-and-drop kanban board built for teams — organize tasks into columns,
+        move work forward, and see every change sync in real time.
+      </p>
+      <div class="hero-actions flex flex-col sm:flex-row items-center gap-4 py-2">
+        <button class="cta primary-cta px-6 py-3" routerLink="/login">Get started free</button>
+        <a href="#how-it-works" class="see-how-link">See how it works</a>
+      </div>
+    </section>
+
+    <section id="features" #revealSection class="features reveal px-4 py-16">
+      <h2 class="text-3xl text-text-primary text-center pb-8">Everything your team needs to ship</h2>
+      <div class="features-grid">
+        @for (feature of features; track feature.title) {
+          <div class="brutal-card">
+            <span class="feature-icon" aria-hidden="true">{{ feature.icon }}</span>
+            <h3 class="text-xl text-text-primary">{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section id="how-it-works" #revealSection class="how-it-works reveal px-4 py-16">
+      <h2 class="text-3xl text-text-primary text-center pb-8">How it works</h2>
+      <div class="how-it-works-content">
+        <ol class="steps-list">
+          @for (step of steps; track step.title; let i = $index) {
+            <li class="step">
+              <span class="step-number" aria-hidden="true">{{ i + 1 }}</span>
+              <div>
+                <h3 class="text-lg text-text-primary">{{ step.title }}</h3>
+                <p>{{ step.description }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+
+        <div class="kanban-mock brutal-card" aria-hidden="true">
+          <div class="kanban-column">
+            <div class="kanban-column-title">Todo</div>
+            <div class="kanban-card"></div>
+            <div class="kanban-card"></div>
+          </div>
+          <div class="kanban-column">
+            <div class="kanban-column-title">In progress</div>
+            <div class="kanban-card"></div>
+          </div>
+          <div class="kanban-column">
+            <div class="kanban-column-title">Done</div>
+            <div class="kanban-card"></div>
+            <div class="kanban-card"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section #revealSection class="final-cta reveal flex flex-col items-center text-center px-4 py-16">
+      <h2 class="text-3xl text-text-primary">Ready to organize your work?</h2>
+      <p class="max-w-xl py-4">Create your first board in under a minute — it's free to get started.</p>
+      <button class="cta primary-cta px-6 py-3" routerLink="/login">Get started free</button>
+    </section>
+
+  </div>
 </app-layout>

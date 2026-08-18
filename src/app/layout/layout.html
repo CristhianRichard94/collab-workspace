@@ -1,0 +1,20 @@
+<header class="flex justify-center items-center w-full bg-surface text-text-primary">
+    <div class="logo-container flex-grow-1 flex justify-center">
+        <img [src]="logoUrl()" alt="Task Grid Logo" class="logo">
+    </div>
+    <app-theme-switch></app-theme-switch>
+    @if (authService.currentUser()) {
+        <span class="current-user mx-4">{{authService.currentUser()?.name}}</span>
+        <button class="header-btn mx-4" (click)="logout()">Logout</button>
+    } @else {
+        <button class="header-btn mx-4"> <a [routerLink]="['/login']" class="p-1" >Login</a> </button>
+    }
+</header>
+<main class="bg-surface text-text-primary">
+    <ng-content></ng-content>
+</main>
+<footer class="flex justify-end items-center bg-surface text-text-primary">
+<span class="text-sm px-2">
+    Made with ❤️ by <a href="https://cristhian-richard.com" target="_blank">Cristhian Richard</a>
+</span>
+</footer>

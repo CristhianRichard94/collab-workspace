@@ -1,0 +1,26 @@
+<div class="theme-switch" role="radiogroup" aria-label="Theme">
+    <button
+        type="button"
+        role="radio"
+        [attr.aria-checked]="themeService.theme() === 'light'"
+        class="theme-option"
+        [class.active]="themeService.theme() === 'light'"
+        (click)="themeService.setTheme('light')"
+    >☀️</button>
+    <button
+        type="button"
+        role="radio"
+        [attr.aria-checked]="themeService.theme() === 'dark'"
+        class="theme-option"
+        [class.active]="themeService.theme() === 'dark'"
+        (click)="themeService.setTheme('dark')"
+    >🌙</button>
+    <button
+        type="button"
+        role="radio"
+        [attr.aria-checked]="themeService.theme() === 'system'"
+        class="theme-option"
+        [class.active]="themeService.theme() === 'system'"
+        (click)="themeService.setTheme('system')"
+    >💻</button>
+</div>

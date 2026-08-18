@@ -1,0 +1,21 @@
+<svg width="640" height="160" viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Taskgrid wordmark, light theme</title>
+  <desc id="desc">The Taskgrid name set in bold monospace black type on white, beside the light grid icon mark, with a yellow underline accent.</desc>
+
+
+  <!-- icon mark, scaled down -->
+  <g transform="translate(28,30) scale(0.5)">
+    <rect x="58" y="58" width="140" height="140" fill="#F2E94E"/>
+    <rect x="46" y="46" width="140" height="140" fill="#F5F5F0" stroke="#0D0D0D" stroke-width="8"/>
+    <line x1="116" y1="46" x2="116" y2="186" stroke="#0D0D0D" stroke-width="8"/>
+    <line x1="46" y1="116" x2="186" y2="116" stroke="#0D0D0D" stroke-width="8"/>
+    <rect x="120" y="50" width="62" height="62" fill="#0D0D0D"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="150" y="98" font-family="Courier New, monospace" font-size="56" font-weight="700" letter-spacing="2" fill="#0D0D0D">TASK<tspan fill="#B8860B">GRID</tspan></text>
+
+  <!-- underline accent -->
+  <rect x="150" y="112" width="460" height="8" fill="#0D0D0D"/>
+  <rect x="150" y="112" width="150" height="8" fill="#F2E94E"/>
+</svg>
