@@ -55,3 +55,9 @@ main {
     color: var(--color-text-primary);
     background: var(--color-bg);
 }
+
+
+.save-badge {
+    top: 1rem;
+    left: 2rem;
+}

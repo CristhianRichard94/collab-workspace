@@ -3,10 +3,11 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { ThemeService } from '../services/theme';
 import { ThemeSwitch } from '../components/theme-switch/theme-switch';
+import { SaveUpdateNotification } from '../components/save-update-notification/save-update-notification';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterLink, ThemeSwitch],
+  imports: [RouterLink, ThemeSwitch, SaveUpdateNotification],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
   host: {

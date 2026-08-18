@@ -1,6 +1,5 @@
-import { computed, inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal, WritableSignal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Board, BoardPreview, Comment, Task } from '../types/board';
 import {
   addDoc,
   collection,
@@ -11,9 +10,26 @@ import {
   setDoc,
   updateDoc,
 } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
-import { AuthService } from './auth';
+import { Observable, of, tap, timer } from 'rxjs';
+import { Board, BoardPreview, Comment, Task } from '../types/board';
 import { UserBoardAccessType } from '../types/user';
+import { AuthService } from './auth';
+
+function TracksSaving(
+  _target: { isSaving: WritableSignal<boolean> },
+  _key: string,
+  descriptor: TypedPropertyDescriptor<(...args: any[]) => Promise<any>>,
+) {
+  const original = descriptor.value!;
+  descriptor.value = async function (this: { isSaving: WritableSignal<boolean> }, ...args: any[]) {
+    this.isSaving.set(true);
+    try {
+      return await original.apply(this, args);
+    } finally {
+      this.isSaving.set(false);
+    }
+  };
+}
 
 @Service()
 export class BoardService {
@@ -21,13 +37,18 @@ export class BoardService {
   private _boardId = signal<string>('');
   private authService = inject(AuthService);
 
+  hasUpdated = signal<boolean>(false);
+  isSaving = signal<boolean>(false);
+
   boardId = this._boardId.asReadonly();
   board$ = rxResource<Board | undefined, string>({
     params: () => this.boardId(),
     stream: ({ params: uid }) => {
       if (!uid) return of(undefined);
       const boardRef = doc(this.firestore, `boards/${uid}`);
-      return docData(boardRef) as Observable<Board | undefined>;
+      return (docData(boardRef) as Observable<Board | undefined>).pipe(
+        tap(() => this.hasUpdatedBoard()),
+      );
     },
   });
 
@@ -41,6 +62,7 @@ export class BoardService {
     () => this.board()?.columns.reduce((acc, curr) => acc + curr.tasks.length, 0) || 0,
   );
 
+  @TracksSaving
   async createBoard() {
     const boardsCollection = collection(this.firestore, 'boards');
     const usersCollection = collection(this.firestore, 'users');
@@ -85,6 +107,7 @@ export class BoardService {
    * make sure the board shows up in their `users/{uid}.boards` list, since
    * that's what the Boards page renders from.
    */
+  @TracksSaving
   async joinBoard(boardId: string) {
     const currentUser = this.authService.currentUser();
     if (!currentUser?.uid) throw new Error('Not authenticated');
@@ -109,6 +132,7 @@ export class BoardService {
    * board's title/description if it isn't already present. No-op if the
    * user already has it (idempotent for rejoin flows).
    */
+  @TracksSaving
   private async addBoardToUserList(boardId: string, uid: string) {
     const currentUser = this.authService.currentUser();
     if (currentUser?.boards?.some((b) => b.id === boardId)) return;
@@ -134,7 +158,7 @@ export class BoardService {
   renameBoard(name: string) {
     const board = this.board()!;
     board.title = name;
-    this.updateBoard(board)
+    this.updateBoard(board);
   }
 
   moveTask(
@@ -167,7 +191,7 @@ export class BoardService {
     });
 
     this.board.set({ ...board, columns });
-    this.updateBoard(this.board() as Board)
+    this.updateBoard(this.board() as Board);
   }
 
   addColumn() {
@@ -189,10 +213,11 @@ export class BoardService {
     this.updateBoard({ ...(board as Board) });
   }
 
-  updateBoard(board: Board) {
+  @TracksSaving
+  async updateBoard(board: Board) {
     const boardCollection = collection(this.firestore, 'boards');
     const boardRef = doc(boardCollection, this._boardId());
-    setDoc(boardRef, board);
+    await setDoc(boardRef, board);
   }
 
   /**
@@ -228,5 +253,12 @@ export class BoardService {
     if (!task) return;
     task.comments = [...(Array.isArray(task.comments) ? task.comments : []), comment];
     this.updateBoard(board);
+  }
+
+  hasUpdatedBoard() {
+    this.hasUpdated.set(true);
+    timer(3000)
+      .pipe(tap(() => this.hasUpdated.set(false)))
+      .subscribe();
   }
 }
