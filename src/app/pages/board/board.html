@@ -34,8 +34,8 @@
       </h1>
       @let columns = boardService.board$.value()?.columns;
 
+      <div class="column-container flex size-full" cdkDropListGroup>
       @if (columns) {
-        <div class="column-container flex size-full" cdkDropListGroup>
           @for (column of columns; track $index) {
             @let tasks = column.tasks;
             <div
@@ -103,6 +103,8 @@
             </div>
           }
 
+      }
+
           <div class="add-column-wrapper flex items-center mx-6">
             <button
               (click)="addColumn()"
@@ -111,12 +113,13 @@
             >
               <span class="new-icon"> </span>
               @if (!columns?.length) {
-                Add a new column
+                <span class="pt-2">
+                  Add a new column
+                </span>
               }
             </button>
           </div>
         </div>
-      }
     }
   </div>
 </app-layout>
