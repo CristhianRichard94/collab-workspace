@@ -11,19 +11,11 @@
 
     @else if (boardService.board$.value(); as board) {
       <h1 class="board-title flex items-center">
-        @if (editingTarget() === 'board') {
-          <input
-            class="title-edit-input"
-            [value]="editValue()"
-            (input)="editValue.set($any($event.target).value)"
-            (keydown.enter)="confirmEdit()"
-            (keydown.escape)="cancelEdit()"
-            (blur)="confirmEdit()"
-          />
-        } @else {
-          <span>{{ board.title }}</span>
-          <button class="edit-btn" (click)="startEdit('board', board.title)" aria-label="Edit board title">✎</button>
-        }
+        <app-editable-text
+          [value]="board.title"
+          ariaLabel="Edit board title"
+          (save)="boardService.renameBoard($event)"
+        />
       </h1>
       @let columns = boardService.board$.value()?.columns;
 
@@ -31,53 +23,74 @@
         <div class="column-container flex size-full" cdkDropListGroup>
           @for (column of columns; track $index) {
             @let tasks = column.tasks;
-            <div class="column border-dashed border-x-1 flex-1"
-            cdkDropList [id]="'list-'+column.id"
-            [cdkDropListData]="tasks"
-            (cdkDropListDropped)="taskDropped($event, $index)"
+            <div
+              class="column flex-1 rounded-xl mx-2"
+              cdkDropList
+              [id]="'list-' + column.id"
+              [cdkDropListData]="tasks"
+              (cdkDropListDropped)="taskDropped($event, $index)"
             >
               <p class="column-title text-xl bg-grey-700 flex justify-center items-center">
-                @if (editingTarget() === $index) {
-                  <input
-                    class="title-edit-input"
-                    [value]="editValue()"
-                    (input)="editValue.set($any($event.target).value)"
-                    (keydown.enter)="confirmEdit()"
-                    (keydown.escape)="cancelEdit()"
-                    (blur)="confirmEdit()"
-                  />
-                } @else {
-                  <span>{{ column.name }}</span>
-                  <button type="button" class="edit-btn" (click)="startEdit($index, column.name)" aria-label="Edit column name">✎</button>
-                }
+                <app-editable-text
+                  class="hover-only justify-center truncate"
+                  [value]="column.name"
+                  ariaLabel="Edit column name"
+                  (save)="boardService.renameColumn($event, $index)"
+                />
               </p>
-              <div class="task-container h-100%" [id]="'task-container-'+column.id">
-                  @for (task of tasks; track $index) {
-                    <div class="task border-1 border-black p-2 m-2 w-50 h-20 flex flex-col" cdkDrag [cdkDragData]="task">
-                      <p class="task-title text-xl text-grey-900 text-center w-full">
-                      {{task.title}}
+              <div
+                class="task-container h-100% flex flex-col px-2"
+                [id]="'task-container-' + column.id"
+              >
+                @for (task of tasks; track $index) {
+                  <div
+                    class="task border-1 border-black rounded-xl p-2 w-100% h-20 flex flex-col"
+                    cdkDrag
+                    [cdkDragData]="task"
+                    (click)="createOrEditTask($index, task)"
+                  >
+                    <p class="task-title text-xl text-grey-900 text-center w-full truncate" [title]="task.title">
+                      {{ task.title }}
+                    </p>
+                    @if (task.assignedTo?.name) {
+                      <p class="assignedTo text-right w-full">
+                        Assigned to :
+                        {{
+                          task.assignedTo?.name === authService.currentUser()?.name
+                            ? 'You'
+                            : task.assignedTo?.name
+                        }}
                       </p>
-                      @if (task.assignedTo.name) {
-                        <p class="assignedTo text-right w-full">Assigned to : {{task.assignedTo.name ===  authService.currentUser()?.name ? "You" : task.assignedTo.name}}</p>
-                      }
-                    </div>
-                  }
+                    }
+                  </div>
+                }
+                <button
+                  class="add-task flex justify-center items-center border-dashed border-1 border-text-primary my-2 rounded-xl"
+                  (click)="createOrEditTask($index)"
+                >
+                  <span>Create Task</span>
+                </button>
               </div>
             </div>
           }
 
-      <div class="add-column-wrapper flex items-center mx-6">
-
-        <button (click)="addColumn()" class="add-columns-btn flex justify-center items-center text-text-secondary border-text-primary border-1 justify-center bg-accent-fill"
-        [ngClass]="{'no-columns': !columns?.length}">
-         <span class="new-icon"> </span>
-         @if(!columns?.length) {
-           Add a new column
-          }
-        </button>
-      </div>
+          <div class="add-column-wrapper flex items-center mx-6">
+            <button
+              (click)="addColumn()"
+              class="add-columns-btn flex justify-center items-center text-text-secondary border-text-primary border-1 justify-center bg-accent-fill rounded-xl"
+              [ngClass]="{ 'no-columns': !columns?.length }"
+            >
+              <span class="new-icon"> </span>
+              @if (!columns?.length) {
+                Add a new column
+              }
+            </button>
+          </div>
         </div>
       }
     }
   </div>
 </app-layout>
+<dialog id="task-form-dialog">
+  <app-task-form [task]="editTask()" [columnIndex]="editTaskColumnIndex()" (closeModal)="closeModal()"></app-task-form>
+</dialog>

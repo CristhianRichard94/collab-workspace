@@ -1,0 +1,88 @@
+<div class="task-form-wrapper flex flex-col">
+  <div class="form-header bg-accent text-text-secondary">
+    <h1 class="text-center text-3xl">{{ !!task() ? 'Edit' : 'Create' }} Task</h1>
+  </div>
+  <div class="task-form-body flex flex-col flex-grow-1">
+    <form (submit)="submitForm($event)" class="form-content flex flex-col m-2 text-sm">
+      <label
+        ><span>Title: </span>
+        <input type="text" placeholder="Insert task title" [formField]="taskForm.title" />
+      </label>
+      <label class="flex flex-col"
+        ><span>Description: </span>
+        <textarea
+          class="border-grey border-1 rounded-xl"
+          type="text"
+          placeholder="Insert task title"
+          [formField]="taskForm.description"
+        ></textarea>
+      </label>
+      <label
+        ><span>Assign to: </span>
+        <select [formField]="taskForm.assignedTo">
+          <option value="">Unassigned</option>
+          @for (user of contributors(); track user.uid) {
+            <option [value]="user.uid">{{ user.name }}</option>
+          }
+        </select>
+      </label>
+      @if (task()?.createdBy) {
+        <div class="task-meta">
+          <span>Created by {{ task()?.createdBy?.name }}</span>
+          <span>Created at {{ task()?.createdAt | date: 'medium' }}</span>
+        </div>
+      }
+      @if (taskForm.title().invalid() && taskForm.title().touched()) {
+        <div class="error">
+          @for (error of taskForm.title().errors(); track error.kind) {
+            <span>{{ error.message }}</span>
+          }
+        </div>
+      }
+      @if (task()) {
+        <div class="comments-panel">
+          <div class="comments-header">Activity</div>
+          <div class="comments-list">
+            @if (comments()?.length) {
+              @for (comment of comments(); track $index) {
+                <div class="comment-bubble">
+                  <div class="comment-meta">
+                    <span>{{ comment.user }}</span>
+                    <span>{{ comment.createdAt }}</span>
+                  </div>
+                  <div class="comment-text">{{ comment.text }}</div>
+                </div>
+              }
+            } @else {
+              <span class="comments-empty">No comments or changes yet.</span>
+            }
+          </div>
+          <div class="comment-composer">
+            <input
+              type="text"
+              placeholder="Write a comment…"
+              [value]="newCommentText()"
+              (input)="newCommentText.set($any($event.target).value)"
+              (keydown.enter)="$event.preventDefault(); postComment()"
+            />
+            <button type="button" (click)="postComment()" [disabled]="!newCommentText().trim()">
+              Comment
+            </button>
+          </div>
+        </div>
+      }
+      <div class="buttons-container flex justify-end">
+        <button
+          class="mx-2 p-2 bg-accent-fill text-text-secondary"
+          [disabled]="taskForm().invalid()"
+          type="submit"
+        >
+          Save
+        </button>
+        <button class="mx-2 p-2" type="button" commandfor="task-form-dialog" command="close">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

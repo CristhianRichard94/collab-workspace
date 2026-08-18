@@ -1,6 +1,6 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Board, DefaultColumns } from '../types/board';
+import { Board, Comment, DefaultColumns, Task } from '../types/board';
 import { addDoc, collection, doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { AuthService } from './auth';
@@ -118,5 +118,30 @@ export class BoardService {
     const boardCollection = collection(this.firestore, 'boards');
     const boardRef = doc(boardCollection, this._boardId());
     setDoc(boardRef, board);
+  }
+
+  /**
+   * This method creates or updates a task
+   */
+  updateTask(task: Task, columnIndex: number) {
+    const board = this.board();
+    if (board) {
+      const existingTaskIndex = board.columns[columnIndex].tasks.findIndex(t => t.id === task.id);
+      if (existingTaskIndex >= 0) {
+        board.columns[columnIndex].tasks[existingTaskIndex] = task;
+      } else {
+        board.columns[columnIndex].tasks.push(task);
+      }
+      this.updateBoard(board)
+    }
+  }
+
+  addComment(taskId: string, columnIndex: number, comment: Comment) {
+    const board = this.board();
+    if (!board) return;
+    const task = board.columns[columnIndex].tasks.find((t) => t.id === taskId);
+    if (!task) return;
+    task.comments = [...(task.comments ?? []), comment];
+    this.updateBoard(board);
   }
 }

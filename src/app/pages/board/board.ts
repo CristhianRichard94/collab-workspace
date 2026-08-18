@@ -5,9 +5,11 @@ import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup} from '@angular/cdk/
 import { Task } from '../../types/board';
 import { AuthService } from '../../services/auth';
 import { CommonModule } from '@angular/common';
+import { TaskForm } from '../../components/task-form/task-form';
+import { EditableText } from '../../components/editable-text/editable-text';
 @Component({
   selector: 'app-board',
-  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup],
+  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText],
   templateUrl: './board.html',
   styleUrl: './board.css',
 })
@@ -16,29 +18,32 @@ export class Board {
   authService = inject(AuthService);
   id = input.required<string>();
 
-  editingTarget = signal<'board' | number | null>(null);
-  editValue = signal('');
+  textEditingTarget = signal<'board' | number | null>(null);
+  textEditValue = signal('');
+  editTaskColumnIndex = signal<number>(0);
+  editTask = signal<Task | null>(null);
 
   constructor() {
     effect(() => {
       this.boardService.setBoardId(this.id());
+      console.log(this.boardService.board())
     })
   }
 
   startEdit(target: 'board' | number, currentValue: string) {
-    this.editingTarget.set(target);
-    this.editValue.set(currentValue);
+    this.textEditingTarget.set(target);
+    this.textEditValue.set(currentValue);
   }
 
   cancelEdit() {
-    this.editingTarget.set(null);
+    this.textEditingTarget.set(null);
   }
 
   confirmEdit() {
-    const target = this.editingTarget();
-    const value = this.editValue().trim();
+    const target = this.textEditingTarget();
+    const value = this.textEditValue().trim();
     if (target === null || !value) {
-      this.editingTarget.set(null);
+      this.textEditingTarget.set(null);
       return;
     }
     if (target === 'board') {
@@ -46,7 +51,7 @@ export class Board {
     } else {
       this.boardService.renameColumn(value, target);
     }
-    this.editingTarget.set(null);
+    this.textEditingTarget.set(null);
   }
 
   taskDropped(event: CdkDragDrop<Task[]>, targetColumnIndex: number) {
@@ -76,5 +81,15 @@ export class Board {
   renameBoard(event: Event) {
     const name = (event.target as HTMLParagraphElement).innerHTML
     this.boardService.renameBoard(name);
+  }
+
+  createOrEditTask(columnIndex: number, task?: Task) {
+    this.editTaskColumnIndex.set(columnIndex);
+    this.editTask.set(task || null);
+    (document.getElementById('task-form-dialog') as HTMLDialogElement | null)?.showModal();
+  }
+
+  closeModal() {
+    (document.getElementById('task-form-dialog') as HTMLDialogElement | null)?.showModal();
   }
 }
