@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { Layout } from './layout';
+import { provideFirebaseTestingMocks } from '../testing/firebase-test-providers';
 
 describe('Layout', () => {
   let component: Layout;
@@ -9,6 +11,7 @@ describe('Layout', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Layout],
+      providers: [provideFirebaseTestingMocks(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Layout);

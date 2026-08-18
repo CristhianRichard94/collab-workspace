@@ -19,6 +19,15 @@ export class AuthService {
     isPlatformBrowser(this.platformId) ? user(this.auth) : of(null)
   );
 
+  /**
+   * True once the Firebase auth state has emitted at least once (either a
+   * user or `null`). Consumers such as `authGuard` must wait for this to be
+   * true before making an authenticated/unauthenticated decision, otherwise
+   * a legitimate session can be wrongly rejected while it is still
+   * restoring (e.g. right after a page refresh).
+   */
+  authReady = computed(() => this.firebaseUser() !== undefined);
+
 
   user$ = resource<AppUser|undefined, string | null>({
     params: () => this.uid(),
