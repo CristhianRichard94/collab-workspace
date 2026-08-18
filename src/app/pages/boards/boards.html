@@ -11,13 +11,18 @@
           <span>or</span>
           <label class="flex flex-col items-center">
             Join board from a share link:
-            <input type="text" placeholder="Insert shared board link:" />
+            <input
+              type="text"
+              placeholder="Insert shared board link:"
+              [value]="joinLinkInput()"
+              (input)="joinLinkInput.set($any($event.target).value)"
+            />
           </label>
           <button
             (click)="joinBoard()"
             class="px-4 py-2 bg-transparent rounded border-black border-1"
           >
-            Entrar
+            Join
           </button>
         </div>
       } @else {

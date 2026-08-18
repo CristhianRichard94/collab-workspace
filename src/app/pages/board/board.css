@@ -348,3 +348,29 @@ dialog {
   top: 3rem;
   border-radius: var(--radius-xl);
 }
+
+.invite-btn {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  color: white;
+  background: transparent;
+  border: 1px solid white;
+  border-radius: var(--radius-md, 4px);
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.invite-btn:hover,
+.invite-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.invite-dialog {
+  border: none;
+  padding: 0;
+  min-width: 20rem;
+}
+
+.invite-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}

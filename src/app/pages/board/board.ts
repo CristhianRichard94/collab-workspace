@@ -1,11 +1,11 @@
-import { Component, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, input, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BoardService } from '../../services/board';
 import { Layout } from '../../layout/layout';
 import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
 import { Task } from '../../types/board';
 import { AuthService } from '../../services/auth';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TaskForm } from '../../components/task-form/task-form';
 import { EditableText } from '../../components/editable-text/editable-text';
 @Component({
@@ -17,6 +17,7 @@ import { EditableText } from '../../components/editable-text/editable-text';
 export class Board {
   boardService = inject(BoardService);
   authService = inject(AuthService);
+  platformId = inject(PLATFORM_ID);
   id = input.required<string>();
 
   textEditingTarget = signal<'board' | number | null>(null);
@@ -24,10 +25,42 @@ export class Board {
   editTaskColumnIndex = signal<number>(0);
   editTask = signal<Task | null>(null);
 
+  linkCopied = signal(false);
+
   constructor() {
     effect(() => {
       this.boardService.setBoardId(this.id());
     })
+  }
+
+  get shareLink(): string {
+    if (!isPlatformBrowser(this.platformId)) return '';
+    return `${location.origin}/join/${this.id()}`;
+  }
+
+  get mailtoInviteLink(): string {
+    const subject = encodeURIComponent('Join my board');
+    const body = encodeURIComponent(`Join my board here: ${this.shareLink}`);
+    return `mailto:?subject=${subject}&body=${body}`;
+  }
+
+  openInviteModal() {
+    this.linkCopied.set(false);
+    (document.getElementById('invite-dialog') as HTMLDialogElement | null)?.showModal();
+  }
+
+  closeInviteModal() {
+    (document.getElementById('invite-dialog') as HTMLDialogElement | null)?.close();
+  }
+
+  async copyShareLink() {
+    if (!isPlatformBrowser(this.platformId) || !navigator?.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(this.shareLink);
+      this.linkCopied.set(true);
+    } catch (e) {
+      console.error(`Error copying share link: ${e}`);
+    }
   }
 
   startEdit(target: 'board' | number, currentValue: string) {

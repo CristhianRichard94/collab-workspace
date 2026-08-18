@@ -52,7 +52,7 @@ export class TaskForm {
 
     effect(async () => {
       const contributorPermissions = this.boardService.board()?.contributors;
-      if (!contributorPermissions?.length) {
+      if (!contributorPermissions || Object.keys(contributorPermissions).length === 0) {
         this.contributors.set([]);
         return;
       }

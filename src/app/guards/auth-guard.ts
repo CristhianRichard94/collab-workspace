@@ -4,7 +4,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { filter, map, take } from 'rxjs';
 import { AuthService } from '../services/auth';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -14,6 +14,11 @@ export const authGuard: CanActivateFn = () => {
   return toObservable(authService.authReady).pipe(
     filter((ready) => ready),
     take(1),
-    map(() => (authService.uid() ? true : router.parseUrl('/login'))),
+    map(() => {
+      if (authService.uid()) return true;
+      const urlTree = router.parseUrl('/login');
+      urlTree.queryParams = { redirectTo: state.url };
+      return urlTree;
+    }),
   );
 };
