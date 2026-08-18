@@ -93,4 +93,9 @@ export class Board {
     (document.getElementById('task-form-dialog') as HTMLDialogElement | null)?.close();
     this.editTask.set(null);
   }
+
+  deleteTask(event: Event, columnIndex: number, taskId: string) {
+    event.stopPropagation();
+    this.boardService.deleteTask(taskId, columnIndex);
+  }
 }

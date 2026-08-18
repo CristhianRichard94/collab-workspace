@@ -125,15 +125,25 @@ export class BoardService {
    */
   updateTask(task: Task, columnIndex: number) {
     const board = this.board();
-    if (board) {
-      const existingTaskIndex = board.columns[columnIndex].tasks.findIndex(t => t.id === task.id);
-      if (existingTaskIndex >= 0) {
-        board.columns[columnIndex].tasks[existingTaskIndex] = task;
-      } else {
-        board.columns[columnIndex].tasks.push(task);
-      }
-      this.updateBoard(board)
+    if (!board) return;
+
+    const actualColumn = board.columns.find((c) => c.tasks.some((t) => t.id === task.id));
+    if (actualColumn) {
+      const existingTaskIndex = actualColumn.tasks.findIndex((t) => t.id === task.id);
+      actualColumn.tasks[existingTaskIndex] = task;
+    } else {
+      board.columns[columnIndex].tasks.push(task);
     }
+    this.updateBoard(board);
+  }
+
+  deleteTask(taskId: string, columnIndex: number) {
+    const board = this.board();
+    if (!board) return;
+    board.columns[columnIndex].tasks = board.columns[columnIndex].tasks.filter(
+      (t) => t.id !== taskId,
+    );
+    this.updateBoard(board);
   }
 
   addComment(taskId: string, columnIndex: number, comment: Comment) {

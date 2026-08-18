@@ -1,9 +1,22 @@
 <app-layout>
   <div class="board flex flex-col size-full">
     @if (boardService.board$.isLoading()) {
-      <p class="error-message border-2 rounded-md border-sky-500 bg-sky-100 inline p-2 flex-0 m-3">
-        Loading dashboard...
-      </p>
+      <div class="skeleton-back-link"></div>
+      <div class="board-title skeleton-board-title flex items-center">
+        <div class="skeleton-title"></div>
+      </div>
+      <div class="column-container flex size-full">
+        @for (col of [0, 1, 2]; track col) {
+          <div class="column skeleton-column flex-1 rounded-xl mx-2">
+            <div class="skeleton-column-title"></div>
+            <div class="skeleton-task-container">
+              @for (task of [0, 1, 2]; track task) {
+                <div class="skeleton-task"></div>
+              }
+            </div>
+          </div>
+        }
+      </div>
     }
     @else if (boardService.board$.value(); as board) {
       <a routerLink="/boards" class="back-link flex items-center gap-1 w-fit" aria-label="Back to boards">
@@ -48,6 +61,20 @@
                     [cdkDragData]="task"
                     (click)="createOrEditTask($index, task)"
                   >
+                    <div class="task-actions">
+                      <button
+                        type="button"
+                        class="task-action-btn"
+                        aria-label="Edit task"
+                        (click)="$event.stopPropagation(); createOrEditTask($index, task)"
+                      >✎</button>
+                      <button
+                        type="button"
+                        class="task-action-btn"
+                        aria-label="Delete task"
+                        (click)="deleteTask($event, $index, task.id)"
+                      >🗑</button>
+                    </div>
                     <p class="task-title text-xl text-grey-900 text-center w-full truncate" [title]="task.title">
                       {{ task.title }}
                     </p>

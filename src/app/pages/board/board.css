@@ -12,6 +12,76 @@ dialog#task-form-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
 }
 
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-title,
+.skeleton-column-title,
+.skeleton-task {
+  background: linear-gradient(90deg, #d9d9d9 25%, #ececec 50%, #d9d9d9 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-xl);
+}
+
+.skeleton-back-link {
+  width: 5rem;
+  height: 1rem;
+  margin: 4px 4px 8px;
+  background: linear-gradient(90deg, #d9d9d9 25%, #ececec 50%, #d9d9d9 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-xl);
+}
+
+.skeleton-board-title {
+  border-bottom-width: 0;
+}
+
+.skeleton-title {
+  width: 12rem;
+  height: 1rem;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.35);
+  animation: none;
+}
+
+.skeleton-column {
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-column-title {
+  height: 2.9rem;
+  margin: 0;
+  border-bottom: 3px solid #000;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.skeleton-task-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 12px;
+  flex: 1;
+  background: #2e2e2e;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.skeleton-task {
+  height: 5rem;
+  width: 100%;
+  border: 3px solid #000;
+}
+
 .back-link {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-black);
@@ -107,6 +177,7 @@ dialog#task-form-dialog::backdrop {
 }
 
 .task {
+  position: relative;
   border: 3px solid #000;
   color: #000;
   display: flex;
@@ -119,6 +190,38 @@ dialog#task-form-dialog::backdrop {
   font-weight: var(--font-weight-bold);
   box-shadow: 4px 4px 0 #000;
   transition: box-shadow 150ms ease;
+  overflow: hidden;
+}
+
+.task-actions {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transform: translateX(12px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.task:hover .task-actions,
+.task-actions:focus-within {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.task-action-btn {
+  border: 1px solid #000;
+  border-radius: var(--radius-md, 4px);
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.8em;
+  line-height: 1;
+  padding: 2px 5px;
+}
+
+.task-action-btn:hover {
+  background: #b9fbc0;
 }
 
 .task:hover {

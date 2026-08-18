@@ -1,7 +1,7 @@
 <app-layout>
-  <div class="boards-container h-100% flex flex-col">
+  <div class="boards-container h-100% flex flex-col m-2">
     @if (authService.currentUser()) {
-      <h1 class="text-3xl">Welcome {{ authService.currentUser()?.name }}!</h1>
+      <h1 class="text-3xl text-center my-2">Welcome {{ authService.currentUser()?.name }}!</h1>
       @if (!authService.currentUser()?.boards || authService.currentUser()?.boards?.length == 0) {
         <div class="empty-board-list flex flex-col items-center gap-y-2">
           <p>You aren't participating in any boards</p>
