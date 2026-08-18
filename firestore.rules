@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    match /users/{userId} {
+      // Any signed-in user can look up basic profile info for contributors
+      // (UserService.getContributors reads other users' docs by uid list).
+      allow read: if isSignedIn();
+      // Only the owner can create/update their own profile doc.
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /boards/{boardId} {
+      // NOTE: `joinBoard()` in boards.ts is currently an unimplemented stub,
+      // so a board only ever has one contributor: its creator. These rules
+      // reflect that. Once multi-user board sharing ships, replace
+      // `created_by` checks with real contributor-list membership checks
+      // (Firestore rules don't support array.filter(lambda) — model
+      // contributors as a map keyed by uid, e.g. `contributors: { [uid]: role }`,
+      // so membership/role can be read with `resource.data.contributors[request.auth.uid]`).
+      allow create: if isSignedIn() &&
+        request.resource.data.created_by == request.auth.uid;
+
+      allow read, update, delete: if isSignedIn() &&
+        resource.data.created_by == request.auth.uid;
+    }
+  }
+}
