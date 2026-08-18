@@ -33,7 +33,6 @@ export class Login implements OnInit {
       const provider = new GoogleAuthProvider();
 
       const result = await signInWithPopup(this.auth, provider);
-      console.log('User signed in successfully:', result.user);
 
       this.router.navigate(['/boards']);
     } catch (error) {

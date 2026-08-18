@@ -24,7 +24,7 @@
         <div class="board-list flex flex-col md:flex-row">
           @for (board of authService.currentUser()?.boards; track board.id) {
             <button
-              class="board-item border-accent border-1 rounded-sm p-2 m-4 md:flex-1 flex flex-col items-center cursor-pointer max-w-70"
+              class="board-item border-accent border-1 rounded-xl p-2 m-4 md:flex-1 flex flex-col items-center cursor-pointer max-w-70"
               [routerLink]="[board.id]"
             >
               <h5>{{ board.title }}</h5>
@@ -34,9 +34,16 @@
                 [alt]="board.title + 'preview'"
                 class="board-preview-img"
               />
-              <p>Total tasks: {{boardService.totaltasks()}}</p>
+              <!-- <p>Total tasks: {{boardService.totaltasks()}}</p> -->
             </button>
           }
+          <button
+            class="board-item create-board-item border-accent border-1 rounded-xl p-2 m-4 md:flex-1 flex flex-col items-center justify-center cursor-pointer max-w-70"
+            (click)="createBoard()"
+          >
+            <span class="new-icon"></span>
+            <h5>Create a board</h5>
+          </button>
         </div>
       }
     }

@@ -8,6 +8,14 @@
   --color-accent-fill: #F2E94E;
   --color-teal: #00A89D;
   --color-coral: #D8334A;
+
+  --font-family-base: sans-serif;
+  --font-weight-thin: 300;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  --font-size-2xs: 0.75rem;
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 0.875rem;
 }
 
 [data-theme='dark'] {

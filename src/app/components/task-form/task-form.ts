@@ -47,7 +47,7 @@ export class TaskForm {
         description: task?.description ?? '',
         assignedTo: task?.assignedTo?.uid ?? '',
       });
-      this.comments.set(task?.comments ?? []);
+      this.comments.set(Array.isArray(task?.comments) ? task.comments : []);
     });
 
     effect(async () => {
@@ -78,7 +78,7 @@ export class TaskForm {
       user: this.authService.currentUser()?.name ?? 'Unknown',
     };
     this.boardService.addComment(taskId, this.columnIndex(), comment);
-    this.comments.update((comments) => [...(comments ?? []), comment]);
+    this.comments.update((comments) => [...(Array.isArray(comments) ? comments : []), comment]);
     this.newCommentText.set('');
   }
 
@@ -92,6 +92,7 @@ export class TaskForm {
     const task = {
       ...existingTask,
       ...formData,
+      id: existingTask?.id ?? crypto.randomUUID(),
       ...(assignedUser ? { assignedTo: assignedUser } : { assignedTo: null }),
       createdBy: existingTask?.createdBy ?? currentUser,
       createdAt: existingTask?.createdAt ?? new Date(),

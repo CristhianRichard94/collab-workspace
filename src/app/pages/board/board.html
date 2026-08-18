@@ -5,11 +5,10 @@
         Loading dashboard...
       </p>
     }
-    <!-- @else if (boardService.board$.error()) {
-    <p class="error-message border-2 rounded-md border-red-500 bg-red-100 inline p-2 flex-0 m-3">Error loading dashboard: {{boardService.board$.error()?.message}}</p>
-} -->
-
     @else if (boardService.board$.value(); as board) {
+      <a routerLink="/boards" class="back-link flex items-center gap-1 w-fit" aria-label="Back to boards">
+        &larr; Boards
+      </a>
       <h1 class="board-title flex items-center">
         <app-editable-text
           [value]="board.title"
@@ -44,7 +43,7 @@
               >
                 @for (task of tasks; track $index) {
                   <div
-                    class="task border-1 border-black rounded-xl p-2 w-100% h-20 flex flex-col"
+                    class="task border-1 border-black rounded-xl p-2 w-100% h-20 flex flex-col my-2"
                     cdkDrag
                     [cdkDragData]="task"
                     (click)="createOrEditTask($index, task)"
@@ -53,7 +52,7 @@
                       {{ task.title }}
                     </p>
                     @if (task.assignedTo?.name) {
-                      <p class="assignedTo text-right w-full">
+                      <p class="assigned-to text-right w-full text-xs">
                         Assigned to :
                         {{
                           task.assignedTo?.name === authService.currentUser()?.name

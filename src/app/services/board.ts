@@ -141,7 +141,7 @@ export class BoardService {
     if (!board) return;
     const task = board.columns[columnIndex].tasks.find((t) => t.id === taskId);
     if (!task) return;
-    task.comments = [...(task.comments ?? []), comment];
+    task.comments = [...(Array.isArray(task.comments) ? task.comments : []), comment];
     this.updateBoard(board);
   }
 }
