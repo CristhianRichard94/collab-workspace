@@ -2,6 +2,7 @@
   display: inline-block;
   color: var(--color-teal);
   font-family: var(--font-mono);
+  white-space: nowrap;
 }
 
 .scramble-text {

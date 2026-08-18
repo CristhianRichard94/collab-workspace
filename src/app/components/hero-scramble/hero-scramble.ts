@@ -1,6 +1,7 @@
 import {
   afterNextRender,
   Component,
+  computed,
   DestroyRef,
   effect,
   inject,
@@ -45,6 +46,9 @@ export function resolveScrambleFrame(
   selector: 'app-hero-scramble',
   templateUrl: './hero-scramble.html',
   styleUrl: './hero-scramble.css',
+  host: {
+    '[style.min-width.ch]': 'maxWordLength()',
+  },
 })
 export class HeroScramble {
   words = input<string[]>(['Organize', 'Ship', 'Collaborate', 'Focus']);
@@ -52,6 +56,12 @@ export class HeroScramble {
   // Initialized synchronously so server-rendered/pre-hydration HTML always
   // shows the first word instead of a blank gap.
   displayText = signal(this.words()[0] ?? '');
+
+  // Reserves width for the longest word so the host never resizes as words
+  // cycle, preventing wrap-driven layout shift in the hero heading.
+  maxWordLength = computed(() =>
+    this.words().reduce((max, word) => Math.max(max, word.length), 0),
+  );
 
   private destroyRef = inject(DestroyRef);
   private timeoutId: ReturnType<typeof setTimeout> | undefined;
