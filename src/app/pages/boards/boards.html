@@ -29,12 +29,6 @@
             >
               <h5>{{ board.title }}</h5>
               <p>{{ board.description }}</p>
-              <img
-                [src]="board.previewUrl || '/dashboard-placeholder.svg'"
-                [alt]="board.title + 'preview'"
-                class="board-preview-img"
-              />
-              <!-- <p>Total tasks: {{boardService.totaltasks()}}</p> -->
             </button>
           }
           <button

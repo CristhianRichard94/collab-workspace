@@ -1,6 +1,6 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Board, Comment, DefaultColumns, Task } from '../types/board';
+import { Board, Comment, Task } from '../types/board';
 import { addDoc, collection, doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { AuthService } from './auth';
@@ -47,7 +47,6 @@ export class BoardService {
       id: result.id,
       title: `New ${currentUser?.name} board`,
       description: '',
-      previewUrl: '',
     };
     const userRef = doc(this.firestore, `users/${currentUser?.uid}`);
     const boardInUser = await setDoc(userRef, {
