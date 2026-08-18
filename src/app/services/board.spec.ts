@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
-import {  BoardService } from './board';
+import { BoardService } from './board';
 
-describe('Board', () => {
-  let service: Board;
+describe('BoardService', () => {
+  let service: BoardService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

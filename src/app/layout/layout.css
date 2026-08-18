@@ -28,6 +28,11 @@ main {
     display: flex;
     flex-direction:column;
     background-color: var(--color-bg);
+    overflow-y: auto;
+}
+
+:host(:not(.fixed-layout)) main {
+    justify-content: flex-start;
 }
 
 .current-user {
