@@ -1,36 +1,44 @@
-
 <app-layout>
-    <div class="boards-container h-100% flex flex-col">
-
-        @if (authService.currentUser()) {
-            <h1 class="text-3xl">
-
-        Welcome {{authService.currentUser()?.name}}!
-    </h1>
-    @if (!authService.currentUser()?.boards || authService.currentUser()?.boards?.length == 0) {
+  <div class="boards-container h-100% flex flex-col">
+    @if (authService.currentUser()) {
+      <h1 class="text-3xl">Welcome {{ authService.currentUser()?.name }}!</h1>
+      @if (!authService.currentUser()?.boards || authService.currentUser()?.boards?.length == 0) {
         <div class="empty-board-list flex flex-col items-center gap-y-2">
-            <p>You aren't participating in any boards</p>
-            <button class="px-4 py-2 bg-blue-600 text-white rounded" (click)="createBoard()">Create a board</button>
-            <span>or</span>
-            <label class="flex flex-col items-center">
-                Join board from a share link:
-                <input type="text" placeholder="Insert shared board link:">
-            </label>
-            <button (click)="joinBoard()" class="px-4 py-2 bg-transparent rounded border-black border-1">Entrar</button>
+          <p>You aren't participating in any boards</p>
+          <button class="px-4 py-2 bg-blue-600 text-white rounded" (click)="createBoard()">
+            Create a board
+          </button>
+          <span>or</span>
+          <label class="flex flex-col items-center">
+            Join board from a share link:
+            <input type="text" placeholder="Insert shared board link:" />
+          </label>
+          <button
+            (click)="joinBoard()"
+            class="px-4 py-2 bg-transparent rounded border-black border-1"
+          >
+            Entrar
+          </button>
         </div>
-    } @else {
+      } @else {
         <div class="board-list flex flex-col md:flex-row">
-            @for (board of authService.currentUser()?.boards; track board.id) {
-
-                    <button class="board-container border-accent border-1 rounded-sm p-2 m-4 md:flex-1 flex flex-col items-center cursor-pointer"  [routerLink]="[board.id]">
-                        <h5>{{board.title}}</h5>
-                        <p>{{board.description}}</p>
-                        <img [src]="board.previewUrl || '/dashboard-placeholder.svg'" [alt]="board.title + 'preview'" class="board-preview-img">
-                    </button>
-                }
-            </div>
-        }
+          @for (board of authService.currentUser()?.boards; track board.id) {
+            <button
+              class="board-item border-accent border-1 rounded-sm p-2 m-4 md:flex-1 flex flex-col items-center cursor-pointer max-w-70"
+              [routerLink]="[board.id]"
+            >
+              <h5>{{ board.title }}</h5>
+              <p>{{ board.description }}</p>
+              <img
+                [src]="board.previewUrl || '/dashboard-placeholder.svg'"
+                [alt]="board.title + 'preview'"
+                class="board-preview-img"
+              />
+              <p>Total tasks: {{boardService.totaltasks()}}</p>
+            </button>
+          }
+        </div>
+      }
     }
-
-</div>
+  </div>
 </app-layout>

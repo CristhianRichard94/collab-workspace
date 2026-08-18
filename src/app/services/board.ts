@@ -1,42 +1,23 @@
-import { computed, inject, resource, Service, signal } from '@angular/core';
-import { Board, DefaultColumns } from '../types/board';
+import { computed, inject, Service, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { Board, Comment, DefaultColumns, Task } from '../types/board';
 import { addDoc, collection, doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
 import { AuthService } from './auth';
 
-const initialBoard: Board = {
-  columns: DefaultColumns,
-  id: '1',
-  title: 'test',
-  description: '',
-  previewUrl: '',
-  contributors: [
-    {
-      role: 0,
-      userId: '1',
-    },
-  ],
-};
 @Service()
 export class BoardService {
   firestore = inject(Firestore);
   private _boardId = signal<string>('');
-  private authService = inject(AuthService)
+  private authService = inject(AuthService);
 
   boardId = this._boardId.asReadonly();
-  // board = this.board.asReadonly()
-
-  // ponytail: fake httpResource backed by mock.ts, swap for real httpResource once API exists
-  board$ = resource<Board | undefined, string>({
+  board$ = rxResource<Board | undefined, string>({
     params: () => this.boardId(),
-    loader: async ({ params: uid }) => {
-      if (!uid) return undefined;
+    stream: ({ params: uid }) => {
+      if (!uid) return of(undefined);
       const boardRef = doc(this.firestore, `boards/${uid}`);
-      return await new Promise<Board | undefined>((resolve) => {
-        docData(boardRef, { idField: 'uid' }).subscribe((data) =>{
-          console.log(data);
-          resolve(data as Board | undefined)}
-        );
-      });
+      return docData(boardRef) as Observable<Board | undefined>;
     },
   });
 
@@ -55,28 +36,31 @@ export class BoardService {
     const usersCollection = collection(this.firestore, 'users');
     const currentUser = this.authService.currentUser();
 
-      const result = await addDoc(boardsCollection, {
-        created_at: `${new Date(Date.now())}`,
-        created_by: currentUser?.uid,
-        title: `New ${currentUser?.name} board`,
-        description: '',
-        contributors: [{ uid: currentUser?.uid, role: 0 }],
-      });
-      const board = {
-        id: result.id,
-        title: `New ${currentUser?.name} board`,
-        description: '',
-        previewUrl: '',
-      };
-      const userRef = doc(this.firestore, `users/${currentUser?.uid}`);
-      const boardInUser = await setDoc(userRef, {
-        ...currentUser,
-        boards: currentUser?.boards.concat([board]),
-      });
-        return board
-
+    const result = await addDoc(boardsCollection, {
+      created_at: `${new Date(Date.now())}`,
+      created_by: currentUser?.uid,
+      title: `New ${currentUser?.name} board`,
+      description: '',
+      contributors: [{ uid: currentUser?.uid, role: 0 }],
+    });
+    const board = {
+      id: result.id,
+      title: `New ${currentUser?.name} board`,
+      description: '',
+      previewUrl: '',
+    };
+    const userRef = doc(this.firestore, `users/${currentUser?.uid}`);
+    const boardInUser = await setDoc(userRef, {
+      ...currentUser,
+      boards: currentUser?.boards.concat([board]),
+    });
+    return board;
   }
-
+  renameBoard(name: string) {
+    const board = this.board()!;
+    board.title = name;
+    this.updateBoard(board)
+  }
 
   moveTask(
     taskId: string,
@@ -108,28 +92,56 @@ export class BoardService {
     });
 
     this.board.set({ ...board, columns });
+    this.updateBoard(this.board() as Board)
   }
 
   addColumn() {
     const board = this.board();
     if (!board) return;
     const index = board.columns?.length || 0;
-    const boardCollection = collection(this.firestore, 'boards');
-    const boardRef = doc(boardCollection, this._boardId());
     const column = { name: `New Column-${index}`, tasks: [], description: '', id: `${index}` };
     const columns = [...(board.columns || []), column];
 
-    setDoc(boardRef, { ...board, columns });
+    this.updateBoard({ ...board, columns });
   }
 
   renameColumn(name: string, index: number) {
-    const boardCollection = collection(this.firestore, 'boards');
-    const boardRef = doc(boardCollection, this._boardId());
     const board = this.board();
     const column = board?.columns[index];
     if (column) {
       column.name = name;
     }
-    setDoc(boardRef, { ...board });
+    this.updateBoard({ ...(board as Board) });
+  }
+
+  updateBoard(board: Board) {
+    const boardCollection = collection(this.firestore, 'boards');
+    const boardRef = doc(boardCollection, this._boardId());
+    setDoc(boardRef, board);
+  }
+
+  /**
+   * This method creates or updates a task
+   */
+  updateTask(task: Task, columnIndex: number) {
+    const board = this.board();
+    if (board) {
+      const existingTaskIndex = board.columns[columnIndex].tasks.findIndex(t => t.id === task.id);
+      if (existingTaskIndex >= 0) {
+        board.columns[columnIndex].tasks[existingTaskIndex] = task;
+      } else {
+        board.columns[columnIndex].tasks.push(task);
+      }
+      this.updateBoard(board)
+    }
+  }
+
+  addComment(taskId: string, columnIndex: number, comment: Comment) {
+    const board = this.board();
+    if (!board) return;
+    const task = board.columns[columnIndex].tasks.find((t) => t.id === taskId);
+    if (!task) return;
+    task.comments = [...(task.comments ?? []), comment];
+    this.updateBoard(board);
   }
 }

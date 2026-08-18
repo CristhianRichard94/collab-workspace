@@ -18,7 +18,7 @@ export interface Task {
   description: string;
   createdBy: User;
   createdAt: Date;
-  assignedTo:User;
+  assignedTo?: User;
   comments: Array<Comment>;
 }
 
