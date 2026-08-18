@@ -51,7 +51,7 @@ export class BoardService {
     const userRef = doc(this.firestore, `users/${currentUser?.uid}`);
     const boardInUser = await setDoc(userRef, {
       ...currentUser,
-      boards: currentUser?.boards.concat([board]),
+      boards: (currentUser?.boards ?? []).concat([board]),
     });
     return board;
   }
