@@ -1,9 +1,19 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Board, Comment, Task } from '../types/board';
-import { addDoc, collection, doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
+import { Board, BoardPreview, Comment, Task } from '../types/board';
+import {
+  addDoc,
+  collection,
+  doc,
+  docData,
+  Firestore,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { AuthService } from './auth';
+import { UserBoardAccessType } from '../types/user';
 
 @Service()
 export class BoardService {
@@ -41,7 +51,7 @@ export class BoardService {
       created_by: currentUser?.uid,
       title: `New ${currentUser?.name} board`,
       description: '',
-      contributors: [{ uid: currentUser?.uid, role: 0 }],
+      contributors: { [currentUser?.uid ?? '']: UserBoardAccessType.ADMIN },
     });
     const board = {
       id: result.id,
@@ -55,6 +65,72 @@ export class BoardService {
     });
     return board;
   }
+  /**
+   * Joins the current user to the given board as a contributor.
+   *
+   * We intentionally do NOT read the board first: security rules deny
+   * `read` to non-contributors, so a pre-check `getDoc` would always throw
+   * `permission-denied` for a legitimate first-time join. Instead we go
+   * straight to `updateDoc`, which Firestore rejects naturally with
+   * `not-found` if the board doesn't exist.
+   *
+   * If the caller is *already* a contributor, the rules forbid touching
+   * `contributors` on that write path, so `updateDoc` fails with
+   * `permission-denied` even though the user is legitimately allowed to be
+   * here (e.g. re-clicking an invite link they already used). That case is
+   * not an error from the user's perspective, so we swallow it and continue
+   * — any other error (like `not-found`) is rethrown as-is.
+   *
+   * Either way, once the user is (or already was) a contributor we also
+   * make sure the board shows up in their `users/{uid}.boards` list, since
+   * that's what the Boards page renders from.
+   */
+  async joinBoard(boardId: string) {
+    const currentUser = this.authService.currentUser();
+    if (!currentUser?.uid) throw new Error('Not authenticated');
+
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
+    try {
+      await updateDoc(boardRef, {
+        [`contributors.${currentUser.uid}`]: UserBoardAccessType.WRITE,
+      });
+    } catch (e) {
+      const code = (e as { code?: string } | undefined)?.code;
+      if (code !== 'permission-denied') {
+        throw e;
+      }
+    }
+
+    await this.addBoardToUserList(boardId, currentUser.uid);
+  }
+
+  /**
+   * Ensures `boardId` is listed under `users/{uid}.boards`, fetching the
+   * board's title/description if it isn't already present. No-op if the
+   * user already has it (idempotent for rejoin flows).
+   */
+  private async addBoardToUserList(boardId: string, uid: string) {
+    const currentUser = this.authService.currentUser();
+    if (currentUser?.boards?.some((b) => b.id === boardId)) return;
+
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
+    const boardSnap = await getDoc(boardRef);
+    const boardData = boardSnap.data() as Board | undefined;
+    if (!boardData) return;
+
+    const boardPreview: BoardPreview = {
+      id: boardId,
+      title: boardData.title,
+      description: boardData.description,
+    };
+
+    const userRef = doc(this.firestore, `users/${uid}`);
+    await setDoc(userRef, {
+      ...currentUser,
+      boards: (currentUser?.boards ?? []).concat([boardPreview]),
+    });
+  }
+
   renameBoard(name: string) {
     const board = this.board()!;
     board.title = name;

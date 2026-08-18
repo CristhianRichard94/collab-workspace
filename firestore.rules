@@ -16,18 +16,40 @@ service cloud.firestore {
     }
 
     match /boards/{boardId} {
-      // NOTE: `joinBoard()` in boards.ts is currently an unimplemented stub,
-      // so a board only ever has one contributor: its creator. These rules
-      // reflect that. Once multi-user board sharing ships, replace
-      // `created_by` checks with real contributor-list membership checks
-      // (Firestore rules don't support array.filter(lambda) — model
-      // contributors as a map keyed by uid, e.g. `contributors: { [uid]: role }`,
-      // so membership/role can be read with `resource.data.contributors[request.auth.uid]`).
+      // Contributors are modeled as a map keyed by uid (`{ [uid]: role }`)
+      // so membership/role can be checked with
+      // `resource.data.contributors[request.auth.uid]`, and Firestore rules
+      // (which can't run array.filter(lambda)) can still express per-key
+      // write restrictions via MapDiff (`.diff()` / `.affectedKeys()`).
       allow create: if isSignedIn() &&
         request.resource.data.created_by == request.auth.uid;
 
-      allow read, update, delete: if isSignedIn() &&
+      allow read: if isSignedIn() &&
+        request.auth.uid in resource.data.contributors;
+
+      allow delete: if isSignedIn() &&
         resource.data.created_by == request.auth.uid;
+
+      allow update: if isSignedIn() &&
+        // `created_by` is immutable on every update path.
+        request.resource.data.created_by == resource.data.created_by && (
+        // Existing contributor editing the board. They may add/remove
+        // other fields freely, but `contributors` itself must be left
+        // completely untouched — role changes (including to their own
+        // role) are out of scope for this feature and must go through a
+        // separate, ADMIN-gated path.
+        (request.auth.uid in resource.data.contributors &&
+         request.resource.data.contributors == resource.data.contributors) ||
+        // Self-join via a share link: the user isn't a contributor yet, and
+        // this write only adds their own uid to `contributors` with the
+        // WRITE role (1) — nothing else on the board (title, columns,
+        // created_by, other uids...) may change in the same write, and
+        // they cannot grant themselves any role other than WRITE.
+        (!(request.auth.uid in resource.data.contributors) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['contributors']) &&
+         request.resource.data.contributors.diff(resource.data.contributors).affectedKeys().hasOnly([request.auth.uid]) &&
+         request.resource.data.contributors[request.auth.uid] == 1)
+      );
     }
   }
 }

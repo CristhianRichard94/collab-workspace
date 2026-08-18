@@ -1,8 +1,8 @@
-import { User, UserBoardPermission } from "./user";
+import { User, UserBoardAccessType } from "./user";
 
 export interface Board extends BoardPreview {
   columns: Array<TaskColumn>
-  contributors: Array<UserBoardPermission>
+  contributors: Record<string, UserBoardAccessType>
 }
 
 export interface BoardPreview {

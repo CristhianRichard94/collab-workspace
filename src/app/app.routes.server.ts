@@ -12,6 +12,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'join/:id',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'login',
     renderMode: RenderMode.Server,
   },

@@ -1,0 +1,10 @@
+<app-layout>
+  <div class="join-container flex flex-col items-center justify-center gap-2 h-100%" role="status" aria-live="polite">
+    @if (!error()) {
+      <p>Joining board&hellip;</p>
+    } @else {
+      <p>We couldn't find that board.</p>
+      <a routerLink="/boards">Back to boards</a>
+    }
+  </div>
+</app-layout>

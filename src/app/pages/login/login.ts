@@ -1,7 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, inject, OnInit, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, user } from '@angular/fire/auth';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Layout } from '../../layout/layout';
 import {first} from 'rxjs'
 @Component({
@@ -12,8 +12,14 @@ import {first} from 'rxjs'
 })
 export class Login implements OnInit {
   router: Router = inject(Router);
+  route: ActivatedRoute = inject(ActivatedRoute);
   auth = inject(Auth);
   platformId = inject(PLATFORM_ID)
+
+  private get redirectTo(): string {
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+    return redirectTo || '/boards';
+  }
 
   ngOnInit() {
      if (isPlatformBrowser(this.platformId)) {
@@ -22,7 +28,7 @@ export class Login implements OnInit {
         .subscribe((currentUser) => {
           if (currentUser) {
 
-            this.router.navigate(['/boards']);
+            this.router.navigateByUrl(this.redirectTo);
           }
         });
     }
@@ -34,7 +40,7 @@ export class Login implements OnInit {
 
       const result = await signInWithPopup(this.auth, provider);
 
-      this.router.navigate(['/boards']);
+      this.router.navigateByUrl(this.redirectTo);
     } catch (error) {
       console.error('Authentication failed:', error);
     }
