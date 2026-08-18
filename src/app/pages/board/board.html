@@ -1,15 +1,27 @@
 <app-layout>
   <div class="board flex flex-col size-full">
     @if (boardService.board$.isLoading()) {
-      <p class="error-message border-2 rounded-md border-sky-500 bg-sky-100 inline p-2 flex-0 m-3">
-        Loading dashboard...
-      </p>
+      <div class="skeleton-back-link"></div>
+      <div class="board-title skeleton-board-title flex items-center">
+        <div class="skeleton-title"></div>
+      </div>
+      <div class="column-container flex size-full">
+        @for (col of [0, 1, 2]; track col) {
+          <div class="column skeleton-column flex-1 rounded-xl mx-2">
+            <div class="skeleton-column-title"></div>
+            <div class="skeleton-task-container">
+              @for (task of [0, 1, 2]; track task) {
+                <div class="skeleton-task"></div>
+              }
+            </div>
+          </div>
+        }
+      </div>
     }
-    <!-- @else if (boardService.board$.error()) {
-    <p class="error-message border-2 rounded-md border-red-500 bg-red-100 inline p-2 flex-0 m-3">Error loading dashboard: {{boardService.board$.error()?.message}}</p>
-} -->
-
     @else if (boardService.board$.value(); as board) {
+      <a routerLink="/boards" class="back-link flex items-center gap-1 w-fit" aria-label="Back to boards">
+        &larr; Boards
+      </a>
       <h1 class="board-title flex items-center">
         <app-editable-text
           [value]="board.title"
@@ -44,16 +56,30 @@
               >
                 @for (task of tasks; track $index) {
                   <div
-                    class="task border-1 border-black rounded-xl p-2 w-100% h-20 flex flex-col"
+                    class="task border-1 border-black rounded-xl p-2 w-100% h-20 flex flex-col my-2"
                     cdkDrag
                     [cdkDragData]="task"
                     (click)="createOrEditTask($index, task)"
                   >
+                    <div class="task-actions">
+                      <button
+                        type="button"
+                        class="task-action-btn"
+                        aria-label="Edit task"
+                        (click)="$event.stopPropagation(); createOrEditTask($index, task)"
+                      >✎</button>
+                      <button
+                        type="button"
+                        class="task-action-btn"
+                        aria-label="Delete task"
+                        (click)="deleteTask($event, $index, task.id)"
+                      >🗑</button>
+                    </div>
                     <p class="task-title text-xl text-grey-900 text-center w-full truncate" [title]="task.title">
                       {{ task.title }}
                     </p>
                     @if (task.assignedTo?.name) {
-                      <p class="assignedTo text-right w-full">
+                      <p class="assigned-to text-right w-full text-xs">
                         Assigned to :
                         {{
                           task.assignedTo?.name === authService.currentUser()?.name

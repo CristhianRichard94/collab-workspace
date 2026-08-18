@@ -32,12 +32,15 @@
 }
 
 :host(.hover-only) .edit-btn {
-  visibility: hidden;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 150ms ease, transform 150ms ease;
 }
 
 :host(.hover-only:hover) .edit-btn,
 :host(.hover-only) .edit-btn:focus-visible {
-  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .title-edit-input {

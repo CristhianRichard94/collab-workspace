@@ -1,4 +1,5 @@
 import { Component, effect, inject, input, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BoardService } from '../../services/board';
 import { Layout } from '../../layout/layout';
 import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup} from '@angular/cdk/drag-drop';
@@ -9,7 +10,7 @@ import { TaskForm } from '../../components/task-form/task-form';
 import { EditableText } from '../../components/editable-text/editable-text';
 @Component({
   selector: 'app-board',
-  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText],
+  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText, RouterLink],
   templateUrl: './board.html',
   styleUrl: './board.css',
 })
@@ -26,7 +27,6 @@ export class Board {
   constructor() {
     effect(() => {
       this.boardService.setBoardId(this.id());
-      console.log(this.boardService.board())
     })
   }
 
@@ -90,6 +90,12 @@ export class Board {
   }
 
   closeModal() {
-    (document.getElementById('task-form-dialog') as HTMLDialogElement | null)?.showModal();
+    (document.getElementById('task-form-dialog') as HTMLDialogElement | null)?.close();
+    this.editTask.set(null);
+  }
+
+  deleteTask(event: Event, columnIndex: number, taskId: string) {
+    event.stopPropagation();
+    this.boardService.deleteTask(taskId, columnIndex);
   }
 }
