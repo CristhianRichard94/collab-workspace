@@ -5,7 +5,7 @@
       @if (!authService.currentUser()?.boards || authService.currentUser()?.boards?.length == 0) {
         <div class="empty-board-list flex flex-col items-center gap-y-2">
           <p>You aren't participating in any boards</p>
-          <button class="px-4 py-2 bg-blue-600 text-white rounded" (click)="createBoard()">
+          <button class="px-4 py-2 bg-accent-fill border-accent border-1 rounded" (click)="createBoard()">
             Create a board
           </button>
           <span>or</span>
@@ -20,7 +20,7 @@
           </label>
           <button
             (click)="joinBoard()"
-            class="px-4 py-2 bg-transparent rounded border-black border-1"
+            class="px-4 py-2 bg-transparent rounded border-accent border-1"
           >
             Join
           </button>

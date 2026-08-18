@@ -10,6 +10,12 @@ dialog#task-form-dialog {
 
 dialog#task-form-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0, 0, 0.2, 1);
+}
+
+dialog#task-form-dialog.is-open::backdrop {
+  opacity: 1;
 }
 
 @keyframes skeleton-shimmer {
@@ -24,7 +30,7 @@ dialog#task-form-dialog::backdrop {
 .skeleton-title,
 .skeleton-column-title,
 .skeleton-task {
-  background: linear-gradient(90deg, #d9d9d9 25%, #ececec 50%, #d9d9d9 75%);
+  background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-highlight) 50%, var(--color-skeleton-base) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.4s ease-in-out infinite;
   border-radius: var(--radius-xl);
@@ -34,7 +40,7 @@ dialog#task-form-dialog::backdrop {
   width: 5rem;
   height: 1rem;
   margin: 4px 4px 8px;
-  background: linear-gradient(90deg, #d9d9d9 25%, #ececec 50%, #d9d9d9 75%);
+  background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-highlight) 50%, var(--color-skeleton-base) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.4s ease-in-out infinite;
   border-radius: var(--radius-xl);
@@ -62,7 +68,7 @@ dialog#task-form-dialog::backdrop {
 .skeleton-column-title {
   height: 2.9rem;
   margin: 0;
-  border-bottom: 3px solid #000;
+  border-bottom: 3px solid var(--color-border);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
@@ -72,14 +78,14 @@ dialog#task-form-dialog::backdrop {
   gap: 0.5rem;
   padding: 12px;
   flex: 1;
-  background: #2e2e2e;
+  background: var(--color-surface-dark);
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
 .skeleton-task {
   height: 5rem;
   width: 100%;
-  border: 3px solid #000;
+  border: 3px solid var(--color-border);
 }
 
 .back-link {
@@ -105,7 +111,7 @@ dialog#task-form-dialog::backdrop {
   font-weight: var(--font-weight-black);
   font-size: var(--font-size-sm);
   text-transform: uppercase;
-  background: #565656;
+  background: var(--color-header-muted);
   border-bottom-width: 0;
   color: white;
   padding: 6px 12px;
@@ -136,8 +142,8 @@ dialog#task-form-dialog::backdrop {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-black);
   text-transform: uppercase;
-  background: #bde0fe;
-  border-bottom: 3px solid #000;
+  background: var(--color-pastel-blue);
+  border-bottom: 3px solid var(--color-border);
   padding: 12px;
   margin: 0;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -147,7 +153,7 @@ dialog#task-form-dialog::backdrop {
   border: none;
   min-height: 60px;
   flex: 1;
-  background: #2e2e2e;
+  background: var(--color-surface-dark);
   overflow-y: auto;
   display: block;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
@@ -164,31 +170,31 @@ dialog#task-form-dialog::backdrop {
   flex-grow: 1;
   height: 5rem;
   opacity: 0;
-  border-color: #000;
-  color: #fff;
+  border-color: var(--color-border);
+  color: var(--color-bg);
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-bold);
   background: transparent;
 }
 
 .task-container .add-task:hover {
-  background: #b9fbc0;
-  box-shadow: 4px 4px 0 #000;
+  background: var(--color-pastel-green);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
 
 .task {
   position: relative;
-  border: 3px solid #000;
-  color: #000;
+  border: 3px solid var(--color-border);
+  color: var(--color-text-primary);
   display: flex;
   align-items: stretch;
   justify-content: center;
   box-sizing: border-box;
   cursor: pointer;
-  background: #ffc9de;
+  background: var(--color-pastel-pink);
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-bold);
-  box-shadow: 4px 4px 0 #000;
+  box-shadow: 4px 4px 0 var(--color-border);
   transition: box-shadow 150ms ease;
   overflow: hidden;
 }
@@ -211,9 +217,9 @@ dialog#task-form-dialog::backdrop {
 }
 
 .task-action-btn {
-  border: 1px solid #000;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md, 4px);
-  background: #fff;
+  background: var(--color-surface);
   cursor: pointer;
   font-size: 0.8em;
   line-height: 1;
@@ -221,11 +227,11 @@ dialog#task-form-dialog::backdrop {
 }
 
 .task-action-btn:hover {
-  background: #b9fbc0;
+  background: var(--color-pastel-green);
 }
 
 .task:hover {
-  box-shadow: 6px 6px 0 #000;
+  box-shadow: 6px 6px 0 var(--color-border);
 }
 
 
@@ -244,8 +250,8 @@ dialog#task-form-dialog::backdrop {
 
 .cdk-drag-preview {
   box-sizing: border-box;
-  border: 3px solid #000;
-  box-shadow: 8px 8px 0 #000;
+  border: 3px solid var(--color-border);
+  box-shadow: 8px 8px 0 var(--color-border);
   transform: rotate(-3deg);
 }
 
@@ -258,7 +264,7 @@ dialog#task-form-dialog::backdrop {
 }
 
 .cdk-drop-list-receiving .column-title {
-  background: #b9fbc0;
+  background: var(--color-pastel-green);
   transition: background 150ms ease;
 }
 
@@ -277,7 +283,7 @@ dialog#task-form-dialog::backdrop {
 }
 
 .add-columns-btn:hover {
-  background-color: #F2E94Eaa;
+  background-color: color-mix(in srgb, var(--color-accent-fill) 67%, transparent);
 }
 
 .new-icon {
@@ -376,4 +382,10 @@ dialog {
 
 .invite-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.invite-dialog.is-open::backdrop {
+  opacity: 1;
 }

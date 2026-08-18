@@ -1,4 +1,5 @@
 .theme-switch {
+    position: relative;
     display: flex;
     align-items: stretch;
     border: 2px solid var(--color-border);
@@ -7,7 +8,18 @@
     background: var(--color-bg);
 }
 
+.theme-indicator {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(100% / 3);
+    z-index: 0;
+    background: var(--color-accent-fill);
+    pointer-events: none;
+}
+
 .theme-option {
+    position: relative;
+    z-index: 1;
     box-shadow: none;
     background: transparent;
     border: none;
@@ -30,6 +42,5 @@
 
 .theme-option.active {
     opacity: 1;
-    background: var(--color-accent-fill);
 }
 

@@ -5,7 +5,14 @@
   min-width: 0;
 }
 
-:host(.truncate) span {
+.display-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+:host(.truncate) .display-group > span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
