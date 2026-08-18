@@ -44,8 +44,8 @@
                       <p class="task-title text-xl text-grey-900 text-center w-full">
                       {{task.title}}
                       </p>
-                      @if (task.assignedTo.name) {
-                        <p class="assignedTo text-right w-full">Assigned to : {{task.assignedTo.name ===  authService.currentUser()?.name ? "You" : task.assignedTo.name}}</p>
+                      @if (task.assignedTo?.name) {
+                        <p class="assignedTo text-right w-full">Assigned to : {{task.assignedTo?.name ===  authService.currentUser()?.name ? "You" : task.assignedTo?.name}}</p>
                       }
                     </div>
                   }

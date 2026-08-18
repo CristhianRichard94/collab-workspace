@@ -17,11 +17,13 @@
   --color-teal: var(--color-teal);
   --color-coral: var(--color-coral);
   --font-mono: "Courier New", monospace;
+  --font-sans: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 
 html, body {
     height: 100%;
+    font-family: var(--font-sans);
 }
 
 
