@@ -1,59 +1,35 @@
-# CollabWorkspace
+# Task Grid
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.8.
+A drag-and-drop kanban board for teams. Make a board, split work into columns, drag tasks across. Everyone watching sees it update live.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+- Angular 22 (standalone components, signals)
+- Firebase / Firestore for auth and real-time data
+- Tailwind CSS v4
+- Vitest for tests
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Getting started
 
 ```bash
-ng generate component component-name
+pnpm install
+pnpm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Open `http://localhost:4200`.
 
-```bash
-ng generate --help
-```
+## Scripts
 
-## Building
+| Command | What it does |
+|---|---|
+| `pnpm start` | Runs the dev server |
+| `pnpm build` | Production build, output in `dist/` |
+| `pnpm test` | Runs the Vitest suite |
 
-To build the project run:
+## What's in here
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Boards** — create, rename, custom columns
+- **Tasks** — drag between columns, assign, edit or delete inline
+- **Live sync** — changes push to every connected client through Firestore
+- **Auth** — Google sign-in via Firebase
+- **Theme** — light/dark, follows system or toggle manually
