@@ -1,0 +1,49 @@
+.login-card {
+  background: var(--color-surface);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 8px 8px 0 var(--color-border);
+}
+
+.login-title {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+.google-btn,
+.cancel-btn {
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  font-weight: var(--font-weight-bold);
+  box-shadow: 3px 3px 0 var(--color-border);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.google-btn {
+  background: #fff;
+  color: #1f1f1f;
+}
+
+.cancel-btn {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.google-btn:hover,
+.cancel-btn:hover {
+  box-shadow: 1px 1px 0 var(--color-border);
+}
+
+.google-btn:active,
+.cancel-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--color-border);
+}
+
+.google-btn:focus-visible,
+.cancel-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

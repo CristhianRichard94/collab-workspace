@@ -34,7 +34,9 @@
   box-shadow: 4px 4px 0 var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;
-  transition: box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
 .brutal-card:hover {
@@ -153,7 +155,9 @@
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition:
+    opacity 500ms ease,
+    transform 500ms ease;
 }
 
 .reveal.is-visible {
@@ -172,3 +176,66 @@
     transform: none;
   }
 }
+
+
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes glowSpin {
+  5% {
+    --angle: 80deg;
+  }
+  70% {
+    --angle: 90deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+.primary-btn {
+  z-index: 1;
+  transition: transform 150ms ease;
+}
+
+.primary-btn:hover,
+.primary-btn:focus-visible {
+  transform: scale(1.04);
+}
+
+.primary-btn:active {
+  transform: scale(0.98);
+}
+.primary-btn span {
+  background-color: var(--color-surface);
+  z-index: 1;
+}
+
+.primary-btn::after, .primary-btn::before {
+  content: '';
+  position: absolute;
+  width: 103%;
+  height: 103%;
+  top: 50%;
+  left: 50%;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 90%,
+    var(--color-accent)
+  );
+  animation: glowSpin 8s linear infinite;
+  translate: -50% -50%;
+  z-index: -1;
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+}
+
+.primary-btn::before {
+  padding: 3rem;
+  filter: blur(1.5rem);
+  opacity: 0.5;
+ }

@@ -127,16 +127,24 @@
   <app-task-form [task]="editTask()" [columnIndex]="editTaskColumnIndex()" (closeModal)="closeModal()"></app-task-form>
 </dialog>
 <dialog id="invite-dialog" class="invite-dialog" aria-label="Invite contributors" (cancel)="onDialogCancel($event, 'invite')">
-  <div class="invite-dialog-content flex flex-col gap-2 p-4">
-    <h2 class="text-xl">Invite contributors</h2>
-    <label class="flex flex-col gap-1">
-      Shareable link
-      <input type="text" readonly [value]="shareLink" aria-label="Shareable board link" />
-    </label>
-    <button type="button" (click)="copyShareLink()">
-      {{ linkCopied() ? 'Link copied!' : 'Copy link' }}
-    </button>
-    <a [href]="mailtoInviteLink">Invite by email</a>
-    <button type="button" (click)="closeInviteModal()">Close</button>
+  <div class="invite-dialog-content flex flex-col">
+    <div class="invite-header">
+      <h2 class="text-xl">Invite contributors</h2>
+    </div>
+    <div class="invite-body flex flex-col">
+      <label class="flex flex-col gap-1">
+        <span>Shareable link</span>
+        <input type="text" readonly [value]="shareLink" aria-label="Shareable board link" />
+      </label>
+      <div class="invite-actions flex justify-end">
+        <button type="button" class="invite-copy-btn" (click)="copyShareLink()">
+          {{ linkCopied() ? 'Link copied!' : 'Copy link' }}
+        </button>
+        <a [href]="mailtoInviteLink" class="invite-email-link">Invite by email</a>
+      </div>
+      <div class="buttons-container flex justify-end">
+        <button type="button" (click)="closeInviteModal()">Close</button>
+      </div>
+    </div>
   </div>
 </dialog>

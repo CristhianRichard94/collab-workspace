@@ -69,48 +69,52 @@ export class Home {
   constructor() {
     afterNextRender(() => {
       const media = matchMedia('(prefers-reduced-motion: reduce)');
-      const elements = this.sections().map((ref) => ref.nativeElement);
-      let observer: IntersectionObserver | undefined;
 
       const revealAll = () => {
-        observer?.disconnect();
-        observer = undefined;
-        elements.forEach((el) => el.classList.add('is-visible'));
+        this.sections().forEach((ref) => ref.nativeElement.classList.add('is-visible'));
       };
 
-      const observeWithMotion = () => {
-        observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer?.unobserve(entry.target);
-              }
-            }
-          },
-          { threshold: 0.15 },
-        );
-        elements.forEach((el) => observer?.observe(el));
+      // Scroll events don't bubble, so listen on the capture phase at the
+      // document root — this stays valid even if the scrollable ancestor
+      // (e.g. <main>) gets replaced by hydration after this listener attaches.
+      // Re-read `sections()` on every check rather than caching nativeElements
+      // once: hydration can swap the underlying nodes after this callback runs,
+      // and stale ElementRefs would silently never intersect anything.
+      const checkReveal = () => {
+        const threshold = window.innerHeight * 0.85;
+        let remaining = false;
+        for (const ref of this.sections()) {
+          const el = ref.nativeElement;
+          if (el.classList.contains('is-visible')) continue;
+          if (el.getBoundingClientRect().top < threshold) {
+            el.classList.add('is-visible');
+          } else {
+            remaining = true;
+          }
+        }
+        if (!remaining) {
+          document.removeEventListener('scroll', checkReveal, true);
+        }
       };
 
       if (media.matches) {
         revealAll();
       } else {
-        observeWithMotion();
+        checkReveal();
+        document.addEventListener('scroll', checkReveal, { capture: true, passive: true });
       }
 
       const onChange = (event: MediaQueryListEvent) => {
         if (event.matches) {
+          document.removeEventListener('scroll', checkReveal, true);
           revealAll();
-        } else {
-          observeWithMotion();
         }
       };
       media.addEventListener('change', onChange);
 
       this.destroyRef.onDestroy(() => {
         media.removeEventListener('change', onChange);
-        observer?.disconnect();
+        document.removeEventListener('scroll', checkReveal, true);
       });
     });
   }
