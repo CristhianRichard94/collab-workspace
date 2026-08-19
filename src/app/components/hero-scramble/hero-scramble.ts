@@ -99,6 +99,18 @@ export class HeroScramble {
     });
   }
 
+  /**
+   * SSR-safe bootstrap: `started` and `renderReady` are separate flags
+   * because they can become true in either order. `renderReady` flips once
+   * `afterNextRender` has run in the browser (so `matchMedia` is safe to
+   * call and the reduced-motion preference is known); `started` flips once
+   * the animation loop has actually been kicked off via `cycle(0)`. Both the
+   * `afterNextRender` callback and the `words` effect call `tryStart()`,
+   * which only proceeds once both `renderReady` is true and there are words
+   * to cycle — this lets the component recover if `words` starts empty (or
+   * this is a server-rendered pass with no `afterNextRender` yet) and only
+   * becomes usable later, without ever double-starting the loop.
+   */
   private tryStart() {
     if (this.started || this.destroyed) return;
     if (this.words().length === 0) return;
@@ -106,6 +118,18 @@ export class HeroScramble {
     this.cycle(0);
   }
 
+  /**
+   * Recursive state machine driving the word rotation. Each call handles one
+   * word at `index` and, on completion, schedules the next call for
+   * `index + 1` — recursion (rather than a loop) is what lets each stage
+   * hand off to the next via its own `setTimeout`/`requestAnimationFrame`
+   * callback instead of blocking. Under reduced motion it just swaps the
+   * displayed word directly, skipping `typeWord`/`scramble` entirely. With
+   * motion enabled, one word takes three stages: `typeWord` types the
+   * current word in character-by-character, a hold delay, then `scramble`
+   * dissolves into the *next* word's characters (resolving left-to-right)
+   * before the cycle repeats.
+   */
   private cycle(index: number) {
     if (this.destroyed) return;
     const words = this.words();

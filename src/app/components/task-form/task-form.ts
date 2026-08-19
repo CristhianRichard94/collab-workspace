@@ -33,6 +33,14 @@ export class TaskForm {
   contributors = signal<Array<User>>([]);
 
   taskData = signal<TaskFormData>(EMPTY_TASK);
+  /**
+   * Signal Forms wiring: `form()` binds `taskData` as the form's live model
+   * (it does not clone it — form controls read/write straight through to
+   * this signal), and the schema callback receives a typed `fieldPath` used
+   * to declare per-field validators like `required` without a separate
+   * FormGroup/FormControl tree. The template binds individual controls via
+   * the `FormField` directive against `taskForm.<field>`.
+   */
   taskForm = form(this.taskData, (fieldPath) => {
     required(fieldPath.title, { message: 'Task name is required.' });
   });
@@ -63,6 +71,13 @@ export class TaskForm {
       this.comments.set(Array.isArray(task?.comments) ? task.comments : []);
     });
 
+    // This effect awaits `getContributors` (an async Firestore query) inside
+    // its own body rather than delegating to a resource, because its output
+    // (`contributors`) is only ever consumed locally for assigning a task
+    // and doesn't need resource-level loading/error state. The effect still
+    // tracks its reactive dependency (`board().contributors`) synchronously
+    // before the first `await`, so re-runs on board changes work as normal;
+    // the `await` only defers writing the result into `contributors`.
     effect(async () => {
       const contributorPermissions = this.boardService.board()?.contributors;
       if (!contributorPermissions || Object.keys(contributorPermissions).length === 0) {

@@ -6,6 +6,23 @@ import gsap from 'gsap';
  * Centralizes GSAP usage so components never touch `gsap`/`matchMedia`
  * directly. Keeps `prefers-reduced-motion` handling consistent and safe
  * for SSR (no DOM access unless running in the browser).
+ *
+ * Shared pattern reused by callers such as `board.ts` (page), `boards.ts`,
+ * and `editable-text.ts` (see those files for concrete usages):
+ *   1. Create a scope with `context(el, fn)`, which wraps `gsap.context()`
+ *      — all tweens/timelines created inside `fn` are registered to that
+ *      scope so they can be torn down together.
+ *   2. Inside `fn`, branch on motion preference via
+ *      `gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', …)`
+ *      rather than a plain `if`, so the animation logic re-evaluates
+ *      automatically if the OS-level preference changes while the scope is
+ *      still alive (e.g. user toggles reduced motion mid-session).
+ *   3. Store the returned `gsap.Context` on the component and call
+ *      `.revert()` on it before recreating the scope (to avoid leaking the
+ *      previous `matchMedia` listener) and in `ngOnDestroy`/`DestroyRef`
+ *      cleanup.
+ * `run()` below is a lighter-weight alternative for one-off tweens that
+ * don't need their own persistent scope.
  */
 @Service()
 export class AnimationService {

@@ -42,8 +42,15 @@ export class EditableText {
   private inputInCtx?: gsap.Context;
 
   constructor() {
-    // Runs after Angular flushes the @if swap into the DOM, so focusing the
-    // input never has to wait on the fade-in tween's completion.
+    // `afterRenderEffect` (not a plain `effect`) is required here: setting
+    // `editing` to true only schedules Angular to swap the `@if` branch, it
+    // doesn't create the `<input>` synchronously. A plain `effect()` would
+    // run before that DOM swap lands, so `inputEl()` would still resolve to
+    // last render's (or no) element. `afterRenderEffect` guarantees the
+    // callback runs after Angular's render/DOM-write phase, so the `<input>`
+    // is guaranteed to exist — and it still runs before the GSAP fade-in
+    // tween is kicked off below, so focusing the input never has to wait on
+    // the tween's completion.
     afterRenderEffect(() => {
       if (!this.editing()) return;
       const input = this.inputEl()?.nativeElement;

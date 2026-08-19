@@ -15,6 +15,14 @@ import { Board, BoardPreview, Comment, Task } from '../types/board';
 import { UserBoardAccessType } from '../types/user';
 import { AuthService } from './auth';
 
+/**
+ * Method decorator that wraps an async class method so `isSaving` flips to
+ * `true` for its duration and back to `false` when it settles (success or
+ * throw). Relies on the decorated class exposing a public `isSaving`
+ * WritableSignal — the decorator itself has no state of its own, it just
+ * closes over `original` and rebinds `this` on each invocation so multiple
+ * decorated methods on the same instance share one signal correctly.
+ */
 function TracksSaving(
   _target: { isSaving: WritableSignal<boolean> },
   _key: string,
@@ -41,6 +49,15 @@ export class BoardService {
   isSaving = signal<boolean>(false);
 
   boardId = this._boardId.asReadonly();
+  /**
+   * `rxResource` reactively re-subscribes to Firestore whenever `boardId`
+   * changes, exposing `.value` as a writable signal alongside `.isLoading`
+   * etc. `board` below aliases `board$.value` so the rest of the service can
+   * read/write board state as a plain signal without reaching into the
+   * resource wrapper each time — local writes to `board` (e.g. optimistic
+   * updates in `moveTask`) are just signal `set`s, they don't re-trigger the
+   * Firestore stream, which only re-runs when `boardId` changes.
+   */
   board$ = rxResource<Board | undefined, string>({
     params: () => this.boardId(),
     stream: ({ params: uid }) => {
@@ -161,6 +178,20 @@ export class BoardService {
     this.updateBoard(board);
   }
 
+  /**
+   * Reorders/relocates a task after a drag-drop, rebuilding the two affected
+   * columns immutably. Handled as three distinct cases because index
+   * semantics differ:
+   *  - same column: filter the task out first, then splice it back in at
+   *    `targetTaskIndex` — filtering first avoids shifting the target index
+   *    when the task's old position is before the new one.
+   *  - source column (different target): just remove the task, no index
+   *    math needed since nothing is inserted here.
+   *  - target column (different source): splice the task in at
+   *    `targetTaskIndex` as given, since it's a fresh insertion into an
+   *    array that never contained the task.
+   * Other columns are passed through untouched via the `col` short-circuit.
+   */
   moveTask(
     taskId: string,
     previousColumnIndex: number,

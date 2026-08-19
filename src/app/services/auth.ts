@@ -29,6 +29,17 @@ export class AuthService {
   authReady = computed(() => this.firebaseUser() !== undefined);
 
 
+  /**
+   * Wraps Firebase's `user(auth)` observable in a `resource`, keyed by
+   * `uid`, so the app-level Firestore user profile (`AppUser`) re-fetches
+   * automatically whenever the signed-in Firebase user changes. `undefined`
+   * from `toSignal` means "auth state hasn't resolved yet" (see
+   * `authReady`), while `null` means "resolved, no user signed in" — both
+   * are distinct from a resolved `AppUser`. The loader treats a falsy `uid`
+   * (either case) the same way, resolving to `undefined` without hitting
+   * Firestore. `currentUser` aliases `user$.value` for convenient plain-
+   * signal access, mirroring the `board$`/`board` pattern in `BoardService`.
+   */
   user$ = resource<AppUser|undefined, string | null>({
     params: () => this.uid(),
     loader: async ({params: uid}) => {

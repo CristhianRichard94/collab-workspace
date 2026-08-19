@@ -19,6 +19,14 @@ export class BoardComponent {
   openInvite = output<void>();
   editTask = output<{ columnIndex: number; task?: Task }>();
 
+  /**
+   * `event.previousContainer.id` is the DOM id of the CDK drop list the
+   * drag started from, which the template sets as `list-{{ column.id }}`
+   * (via `cdkDropListId` / `id` binding) — stripping the `'list-'` prefix
+   * here is how we recover the actual column id. This is an implicit
+   * contract with the template: if the id prefix there ever changes, this
+   * strip must change too, since there's no shared constant enforcing it.
+   */
   taskDropped(event: CdkDragDrop<Task[]>, targetColumnIndex: number) {
     const previousColumnId = event.previousContainer.id.replace('list-', '');
     const columns = this.boardService.board()?.columns ?? [];

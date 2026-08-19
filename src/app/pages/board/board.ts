@@ -10,6 +10,29 @@ import { BoardSkeleton } from '../../components/board-skeleton/board-skeleton';
 import { BoardComponent } from '../../components/board-component/board-component';
 import { AnimationService } from '../../services/animation';
 import gsap from 'gsap';
+/**
+ * Owns the board page's dialog and entrance-animation lifecycle.
+ *
+ * - Dialogs (`openDialog`/`closeDialog`) use `gsap.context()` scoped to the
+ *   `<dialog>` element (see {@link AnimationService.context}) so each
+ *   open/close creates and reverts its own scope instead of leaking
+ *   `matchMedia` listeners across repeated opens.
+ * - Focus is captured in `lastFocusedElement` right before `showModal()` and
+ *   restored once the close tween finishes, so keyboard/screen-reader users
+ *   land back where they were instead of on `<body>`.
+ * - `createOrEditTask` calls `this.appRef.tick()` synchronously before
+ *   `openDialog()`. This is a deliberate ordering hack: setting
+ *   `editTask`/`editTaskColumnIndex` schedules Angular change detection
+ *   asynchronously, but `TaskForm`'s own `effect()`s (which populate its
+ *   comments/fields from the new `task` input) also run async. Without a
+ *   forced `tick()`, `dialog.showModal()` can paint before those effects
+ *   flush, so the dialog opens showing stale content from the previous task
+ *   for one frame. Forcing the tick first guarantees the DOM is current
+ *   before the dialog (and its entrance tween) is shown.
+ * - `hasAnimatedIn` guards the board's entrance stagger animation (columns/
+ *   tasks fading in) so it plays exactly once per page load, not every time
+ *   the `board$` resource re-emits (e.g. after a Firestore update).
+ */
 @Component({
   selector: 'app-board',
   imports: [Layout, CommonModule, TaskForm, InviteDialog, BoardSkeleton, BoardComponent, RouterLink],
