@@ -1,0 +1,5 @@
+<div class="notification-container relative">
+    <span class="notification absolute" [ngClass]="{'visible': boardService.isSaving()}"> 💾 </span>
+    <span class="notification absolute update" [ngClass]="{'visible': boardService.hasUpdated()}"> 🔁 </span>
+</div>
+
