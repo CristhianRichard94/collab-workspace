@@ -14,8 +14,8 @@
     }
   </div>
 </app-layout>
-<dialog id="task-form-dialog" aria-label="Task details" (cancel)="onDialogCancel($event, 'task-form')">
-  <app-task-form [task]="editTask()" [columnIndex]="editTaskColumnIndex()" (closeModal)="closeModal()"></app-task-form>
+<dialog id="task-form-dialog" aria-label="Task details" (cancel)="onDialogCancel($event, 'task-form')" (click)="closeModal()">
+  <app-task-form [task]="editTask()" [columnIndex]="editTaskColumnIndex()" (closeModal)="closeModal()" (click)="$event.stopPropagation()"></app-task-form>
 </dialog>
 <app-invite-dialog
   [boardId]="id()"

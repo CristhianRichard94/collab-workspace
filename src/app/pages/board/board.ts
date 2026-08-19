@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, input, OnInit, PLATFORM_ID, signal, viewChild } from '@angular/core';
+import { ApplicationRef, Component, DestroyRef, effect, inject, input, OnInit, PLATFORM_ID, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BoardService } from '../../services/board';
 import { Layout } from '../../layout/layout';
@@ -21,6 +21,7 @@ export class Board {
   platformId = inject(PLATFORM_ID);
   private animationService = inject(AnimationService);
   private destroyRef = inject(DestroyRef);
+  private appRef = inject(ApplicationRef);
   id = input.required<string>();
   inviteDialog = viewChild(InviteDialog);
 
@@ -181,6 +182,9 @@ export class Board {
   createOrEditTask(columnIndex: number, task?: Task) {
     this.editTaskColumnIndex.set(columnIndex);
     this.editTask.set(task || null);
+    // Flush pending effects/CD (e.g. TaskForm's comments) before the dialog
+    // paints, otherwise showModal() renders a frame with stale content.
+    this.appRef.tick();
     this.openDialog(document.getElementById('task-form-dialog') as HTMLDialogElement | null);
   }
 

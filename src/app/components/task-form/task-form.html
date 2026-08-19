@@ -28,8 +28,8 @@
       </label>
       @if (task()?.createdBy) {
         <div class="task-meta">
-          <span class="text-sm">Created by {{ task()?.createdBy?.name }}</span>
-          <span class="text-sm">Created at {{ task()?.createdAt | date: 'medium' }}</span>
+          <p class="text-sm">Created by {{ task()?.createdBy?.name }}</p>
+          <p class="text-sm">Created at {{ createdAtDate() | date: 'medium' }}</p>
         </div>
       }
       @if (taskForm.title().invalid() && taskForm.title().touched()) {

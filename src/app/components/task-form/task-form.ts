@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { form, FormField, required } from '@angular/forms/signals';
 import { AuthService } from '../../services/auth';
@@ -20,6 +20,9 @@ const EMPTY_TASK: TaskFormData = { title: '', description: '', assignedTo: '' };
   imports: [FormField, DatePipe],
   templateUrl: './task-form.html',
   styleUrl: './task-form.css',
+  host: {
+    class: 'w-[90vw] max-w-[36rem] md:max-w-2xl lg:max-w-3xl',
+  },
 })
 export class TaskForm {
   columnIndex = input.required<number>();
@@ -36,6 +39,16 @@ export class TaskForm {
 
   newCommentText = signal('');
   comments = signal<Task['comments']>([]);
+
+  /** Firestore returns `createdAt` as a Timestamp, not a Date — DatePipe needs a real Date. */
+  createdAtDate = computed(() => {
+    const createdAt = this.task()?.createdAt as unknown;
+    if (createdAt instanceof Date) return createdAt;
+    if (createdAt && typeof (createdAt as { toDate?: () => Date }).toDate === 'function') {
+      return (createdAt as { toDate: () => Date }).toDate();
+    }
+    return createdAt ? new Date(createdAt as string) : null;
+  });
 
   closeModal = output();
 
@@ -95,7 +108,7 @@ export class TaskForm {
       id: existingTask?.id ?? crypto.randomUUID(),
       ...(assignedUser ? { assignedTo: assignedUser } : { assignedTo: null }),
       createdBy: existingTask?.createdBy ?? currentUser,
-      createdAt: existingTask?.createdAt ?? new Date(),
+      createdAt: existingTask?.createdAt || new Date(),
     } as Task;
 
     try {
