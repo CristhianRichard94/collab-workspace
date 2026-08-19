@@ -7,104 +7,10 @@
       <a routerLink="/boards" class="back-link flex items-center gap-1 w-fit" aria-label="Back to boards">
         &larr; Boards
       </a>
-      <h1 class="board-title flex items-center justify-between">
-        <app-editable-text
-          [value]="board.title"
-          ariaLabel="Edit board title"
-          (save)="boardService.renameBoard($event)"
-        />
-        <button type="button" class="invite-btn" (click)="openInviteModal()">
-          Invite
-        </button>
-      </h1>
-      @let columns = boardService.board$.value()?.columns;
-
-      <div class="column-container flex size-full" cdkDropListGroup>
-      @if (columns) {
-          @for (column of columns; track $index) {
-            @let tasks = column.tasks;
-            <div
-              class="column flex-1 rounded-xl mx-2"
-              cdkDropList
-              [id]="'list-' + column.id"
-              [cdkDropListData]="tasks"
-              (cdkDropListDropped)="taskDropped($event, $index)"
-            >
-              <p class="column-title text-xl bg-grey-700 flex justify-center items-center">
-                <app-editable-text
-                  class="hover-only justify-center truncate"
-                  [value]="column.name"
-                  ariaLabel="Edit column name"
-                  (save)="boardService.renameColumn($event, $index)"
-                />
-              </p>
-              <div
-                class="task-container h-100% flex flex-col px-2"
-                [id]="'task-container-' + column.id"
-              >
-                @for (task of tasks; track $index) {
-                  <div
-                    class="task border-1 border-black rounded-xl p-2 w-100% h-20 flex flex-col my-2"
-                    cdkDrag
-                    [cdkDragData]="task"
-                    (click)="createOrEditTask($index, task)"
-                  >
-                    <div class="task-actions">
-                      <button
-                        type="button"
-                        class="task-action-btn"
-                        aria-label="Edit task"
-                        (click)="$event.stopPropagation(); createOrEditTask($index, task)"
-                      >✎</button>
-                      <button
-                        type="button"
-                        class="task-action-btn"
-                        aria-label="Delete task"
-                        (click)="deleteTask($event, $index, task.id)"
-                      >🗑</button>
-                    </div>
-                    <p class="task-title text-xl text-grey-900 text-center w-full truncate" [title]="task.title">
-                      {{ task.title }}
-                    </p>
-                    @if (task.assignedTo?.name) {
-                      <p class="assigned-to text-right w-full text-xs">
-                        Assigned to :
-                        {{
-                          task.assignedTo?.name === authService.currentUser()?.name
-                            ? 'You'
-                            : task.assignedTo?.name
-                        }}
-                      </p>
-                    }
-                  </div>
-                }
-                <button
-                  class="add-task flex justify-center items-center border-dashed border-1 border-text-primary my-2 rounded-xl"
-                  (click)="createOrEditTask($index)"
-                >
-                  <span>Create Task</span>
-                </button>
-              </div>
-            </div>
-          }
-
-      }
-
-          <div class="add-column-wrapper flex items-center mx-6">
-            <button
-              (click)="addColumn()"
-              class="add-columns-btn flex justify-center items-center text-text-secondary border-text-primary border-1 justify-center bg-accent-fill rounded-xl"
-              [class.no-columns]="!columns?.length"
-            >
-              <span class="new-icon"> </span>
-              @if (!columns?.length) {
-                <span class="pt-2">
-                  Add a new column
-                </span>
-              }
-            </button>
-          </div>
-        </div>
+      <app-board-component
+        (openInvite)="openInviteModal()"
+        (editTask)="createOrEditTask($event.columnIndex, $event.task)"
+      />
     }
   </div>
 </app-layout>
