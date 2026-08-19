@@ -29,7 +29,8 @@ dialog#task-form-dialog.is-open::backdrop {
 
 .skeleton-title,
 .skeleton-column-title,
-.skeleton-task {
+.skeleton-task,
+.skeleton-back-link {
   background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-highlight) 50%, var(--color-skeleton-base) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.4s ease-in-out infinite;
@@ -40,10 +41,6 @@ dialog#task-form-dialog.is-open::backdrop {
   width: 5rem;
   height: 1rem;
   margin: 4px 4px 8px;
-  background: linear-gradient(90deg, var(--color-skeleton-base) 25%, var(--color-skeleton-highlight) 50%, var(--color-skeleton-base) 75%);
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.4s ease-in-out infinite;
-  border-radius: var(--radius-xl);
 }
 
 .skeleton-board-title {
@@ -127,8 +124,6 @@ dialog#task-form-dialog.is-open::backdrop {
 }
 
 .column {
-  /* border: 3px solid var(--color-bg);
-  box-shadow: 8px 8px 0 var(--color-bg); */
   padding: 0;
   min-width: 20rem;
   max-width: 30rem;
@@ -372,125 +367,4 @@ dialog {
 .invite-btn:hover,
 .invite-btn:focus-visible {
   background: rgba(255, 255, 255, 0.15);
-}
-
-.invite-dialog {
-  border: none;
-  padding: 0;
-  min-width: 20rem;
-  background: transparent;
-}
-
-.invite-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transition: opacity 0.2s cubic-bezier(0, 0, 0.2, 1);
-}
-
-.invite-dialog.is-open::backdrop {
-  opacity: 1;
-}
-
-.invite-dialog-content {
-  background: var(--color-surface);
-  color: var(--color-text-primary);
-  border: 3px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: 8px 8px 0 var(--color-border);
-  overflow: hidden;
-}
-
-.invite-header {
-  background: var(--color-accent-fill);
-  border-bottom: 3px solid var(--color-border);
-  padding: 12px;
-}
-
-.invite-header h2 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-black);
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-.invite-body {
-  padding: 1.25rem;
-  gap: 1rem;
-}
-
-.invite-body label {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-secondary);
-  gap: 0.35rem;
-}
-
-.invite-body input[type='text'] {
-  font: inherit;
-  color: var(--color-text-primary);
-  background: var(--color-bg);
-  border: 2px solid var(--color-border);
-  border-radius: 8px;
-  padding: 0.5rem 0.65rem;
-}
-
-.invite-body input[type='text']:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
-}
-
-.invite-actions {
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.invite-copy-btn {
-  border: 2px solid var(--color-border);
-  border-radius: 8px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  font-size: var(--font-size-2xs);
-  padding: 0.5rem 0.75rem;
-  background: var(--color-pastel-green);
-  box-shadow: 3px 3px 0 var(--color-border);
-  transition: box-shadow 150ms ease;
-}
-
-.invite-copy-btn:hover {
-  box-shadow: 1px 1px 0 var(--color-border);
-}
-
-.invite-email-link {
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  font-size: var(--font-size-2xs);
-  color: var(--color-text-primary);
-  text-decoration: underline;
-}
-
-.invite-email-link:hover,
-.invite-email-link:focus-visible {
-  color: var(--color-accent);
-}
-
-.invite-body .buttons-container {
-  gap: 0.5rem;
-  padding-top: 0.25rem;
-  border-top: 2px solid var(--color-border);
-  margin-top: 0.25rem;
-}
-
-.invite-body .buttons-container button {
-  border: 2px solid var(--color-border);
-  border-radius: 8px;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  box-shadow: 3px 3px 0 var(--color-border);
-  transition: box-shadow 150ms ease;
-  padding: 0.5rem 0.75rem;
-  background: var(--color-surface);
-}
-
-.invite-body .buttons-container button:hover {
-  box-shadow: 1px 1px 0 var(--color-border);
 }

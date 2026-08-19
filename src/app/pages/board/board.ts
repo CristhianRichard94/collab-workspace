@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, input, OnInit, PLATFORM_ID, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, OnInit, PLATFORM_ID, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BoardService } from '../../services/board';
 import { Layout } from '../../layout/layout';
@@ -8,11 +8,12 @@ import { AuthService } from '../../services/auth';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TaskForm } from '../../components/task-form/task-form';
 import { EditableText } from '../../components/editable-text/editable-text';
+import { InviteDialog } from '../../components/invite-dialog/invite-dialog';
 import { AnimationService } from '../../services/animation';
 import gsap from 'gsap';
 @Component({
   selector: 'app-board',
-  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText, RouterLink],
+  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText, InviteDialog, RouterLink],
   templateUrl: './board.html',
   styleUrl: './board.css',
 })
@@ -23,6 +24,7 @@ export class Board {
   private animationService = inject(AnimationService);
   private destroyRef = inject(DestroyRef);
   id = input.required<string>();
+  inviteDialog = viewChild(InviteDialog);
 
   /** Tracks the element to restore focus to once the active dialog finishes closing. */
   private lastFocusedElement: HTMLElement | null = null;
@@ -35,8 +37,6 @@ export class Board {
   textEditValue = signal('');
   editTaskColumnIndex = signal<number>(0);
   editTask = signal<Task | null>(null);
-
-  linkCopied = signal(false);
 
   /** Guards the board entrance stagger animation so it only ever plays once per load. */
   private hasAnimatedIn = signal(false);
@@ -173,34 +173,13 @@ export class Board {
     }
   }
 
-  get shareLink(): string {
-    if (!isPlatformBrowser(this.platformId)) return '';
-    return `${location.origin}/join/${this.id()}`;
-  }
-
-  get mailtoInviteLink(): string {
-    const subject = encodeURIComponent('Join my board');
-    const body = encodeURIComponent(`Join my board here: ${this.shareLink}`);
-    return `mailto:?subject=${subject}&body=${body}`;
-  }
-
   openInviteModal() {
-    this.linkCopied.set(false);
+    this.inviteDialog()?.resetCopyState();
     this.openDialog(document.getElementById('invite-dialog') as HTMLDialogElement | null);
   }
 
   closeInviteModal() {
     this.closeDialog(document.getElementById('invite-dialog') as HTMLDialogElement | null);
-  }
-
-  async copyShareLink() {
-    if (!isPlatformBrowser(this.platformId) || !navigator?.clipboard) return;
-    try {
-      await navigator.clipboard.writeText(this.shareLink);
-      this.linkCopied.set(true);
-    } catch (e) {
-      console.error(`Error copying share link: ${e}`);
-    }
   }
 
   startEdit(target: 'board' | number, currentValue: string) {
