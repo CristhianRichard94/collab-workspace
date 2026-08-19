@@ -1,0 +1,15 @@
+<div class="board-title skeleton-board-title flex items-center">
+  <div class="skeleton-title"></div>
+</div>
+<div class="column-container flex size-full">
+  @for (col of [0, 1, 2]; track col) {
+    <div class="column skeleton-column flex-1 rounded-xl mx-2">
+      <div class="skeleton-column-title"></div>
+      <div class="skeleton-task-container">
+        @for (task of [0, 1, 2]; track task) {
+          <div class="skeleton-task"></div>
+        }
+      </div>
+    </div>
+  }
+</div>

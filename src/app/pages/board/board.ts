@@ -9,11 +9,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TaskForm } from '../../components/task-form/task-form';
 import { EditableText } from '../../components/editable-text/editable-text';
 import { InviteDialog } from '../../components/invite-dialog/invite-dialog';
+import { BoardSkeleton } from '../../components/board-skeleton/board-skeleton';
 import { AnimationService } from '../../services/animation';
 import gsap from 'gsap';
 @Component({
   selector: 'app-board',
-  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText, InviteDialog, RouterLink],
+  imports: [Layout, CommonModule, CdkDrag, CdkDropList, CdkDropListGroup, TaskForm, EditableText, InviteDialog, BoardSkeleton, RouterLink],
   templateUrl: './board.html',
   styleUrl: './board.css',
 })
