@@ -1,12 +1,31 @@
 .home-container {
   width: 100%;
-  background: var(--color-bg);
   background: linear-gradient(
     154deg,
     var(--color-bg) 25%,
     var(--color-surface) 58%,
     var(--color-accent) 100%
   );
+  background-size: 400% 400%;
+  animation: gradient-shift 18s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-container {
+    animation: none;
+  }
 }
 
 .hero-subtext {
