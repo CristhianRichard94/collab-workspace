@@ -6,7 +6,8 @@
     var(--color-surface) 58%,
     var(--color-accent) 100%
   );
-  background-size: 400% 400%;
+  background-attachment: fixed;
+  background-size: 400% 400vh;
   animation: gradient-shift 18s ease infinite;
 }
 
