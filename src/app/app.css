@@ -1,0 +1,30 @@
+.app-gradient-bg {
+  min-height: 100%;
+  background: linear-gradient(
+    -45deg,
+    var(--color-bg),
+    var(--color-teal),
+    var(--color-bg),
+    var(--color-accent)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 18s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-gradient-bg {
+    animation: none;
+  }
+}
